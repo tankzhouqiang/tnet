@@ -1,0 +1,7 @@
+# -*- mode: python -*-
+import os
+Import('env')
+
+libnetwork_sources = [
+    ]
+

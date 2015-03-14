@@ -1,0 +1,12 @@
+# -*- mode: python -*-
+Import('env')
+env.MergeFlags('-I.')
+
+libnetwork_sources = [
+    'EpollEvent.cpp',
+    ]
+
+env.SharedLibrary(target = 'tnet_network',
+              source = libnetwork_sources)
+
+SConscript('test/SConscript', 'env')
