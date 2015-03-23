@@ -1,0 +1,17 @@
+# -*- mode: python -*-
+import os
+Import('env')
+
+libutil_sources = [
+    'StringUtilTest.cpp',
+    'mainTest.cpp',
+    ]
+
+env.Program('tnet_util_test',
+            libutil_sources,
+            LIBS = ['glog', 'gtest', 'tnet_util', 'pthread'], 
+            LIBPATH = ['.', '../', '../../../lib/'])
+
+cmd ="/usr/bin/env install_root=%s GLOG_logtostderr=1 LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib64:/usr/lib:%s/build/util/:%s/lib ./tnet_util_test" % (env['install_root'], env['install_root'], env['install_root'])
+print cmd
+os.system(cmd)

@@ -1,0 +1,12 @@
+# -*- mode: python -*-
+Import('env')
+env.MergeFlags('-I.')
+
+libutil_sources = [
+    'StringUtil.cpp',
+    ]
+
+env.SharedLibrary(target = 'tnet_util',
+              source = libutil_sources)
+
+SConscript('test/SConscript', 'env')

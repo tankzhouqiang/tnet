@@ -3,6 +3,7 @@ import os, sys
 Import('env')
 SConscript('network/SConscript', 'env')
 SConscript('common/SConscript', 'env')
+SConscript('util/SConscript', 'env')
 
 
 

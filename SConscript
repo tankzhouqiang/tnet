@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-install_root = "/home/zhouqiang/svn/tnet/"
+install_root = "/home/tank/svn/tnet/"
 ccflags = "-I%s -I%s -std=c++11" % (install_root, install_root + 'include/')
 
 env = Environment(CCFLAGS = ccflags)

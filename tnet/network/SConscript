@@ -4,6 +4,10 @@ env.MergeFlags('-I.')
 
 libnetwork_sources = [
     'EpollEvent.cpp',
+    'Transport.cpp',
+    'ServerAdapter.cpp',
+    'ClientAdapter.cpp',
+    'TcpAcceptor.cpp',
     ]
 
 env.SharedLibrary(target = 'tnet_network',
