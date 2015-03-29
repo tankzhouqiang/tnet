@@ -7,6 +7,8 @@
 #include <libgen.h>
 #include <glog/logging.h>
 
+#define DELETE_AND_SET_NULL(object)  if (object) { delete object; object = NULL;}
+
 //#define TNET_BEGIN_NAMESPACE(x) namespace Tnet { namespace x {
 #define TNET_BEGIN_NAMESPACE(x) namespace Tnet { namespace x{ 
 
