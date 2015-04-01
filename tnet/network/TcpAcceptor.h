@@ -11,17 +11,17 @@ TNET_BEGIN_NAMESPACE(network);
 class TcpAcceptor : public IOComponent
 {
 public:
-    static const std::string IP_PORT_SEPARATOR;
-public:
     TcpAcceptor();
     ~TcpAcceptor();
 private:
     TcpAcceptor(const TcpAcceptor &);
     TcpAcceptor& operator=(const TcpAcceptor &);
 public:
-    bool init(const std::string& spec, ServerAdapter *adapter);
-private:
-    bool parseAddress(const std::string& spec, std::string& ip, int& port);
+    bool init(const std::string& ip, int port, ServerAdapter *adapter);
+
+    virtual void handleReadEvent() {assert(false);}
+    virtual void handleWriteEvent() {assert(false);}
+    virtual void handleErrorEvent() {assert(false);};
 private:
     ServerAdapter *_serverAdapter;
 };

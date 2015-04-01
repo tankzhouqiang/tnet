@@ -5,6 +5,7 @@ Import('env')
 libutil_sources = [
     'StringUtilTest.cpp',
     'mainTest.cpp',
+    'ThreadTest.cpp',
     ]
 
 env.Program('tnet_util_test',

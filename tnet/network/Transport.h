@@ -6,12 +6,14 @@
 #include <tnet/network/ClientAdapter.h>
 #include <tnet/network/EpollEvent.h>
 #include <tnet/network/TcpAcceptor.h>
+#include <tnet/util/Thread.h>
 
 TNET_BEGIN_NAMESPACE(network);
 
 class Transport
 {
 public:
+    static const std::string IP_PORT_SEPARATOR;
     static const uint32_t DEFAULT_THREAD_COUNT = 16;
 public:
     Transport();
@@ -37,11 +39,13 @@ public:
 
     void stop();
 private:
-    uint32_t _threadCount;
+    bool ioLoop();
+    bool parseAddress(const std::string& spec, std::string& ip, int& port);
+private:
     TcpAcceptor *_tcpAcceptor;
     EpollEvent *_epollEvent;
-    //todo multi io thrad 
-//    vector<EpollEvent*> _connEpollEvents;
+    util::ThreadPtr _ioThreadPtr;
+    bool _start;
 };
 
 TNET_TYPEDEF_PTR(Transport);
