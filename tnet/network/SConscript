@@ -13,6 +13,9 @@ libnetwork_sources = [
     'ServerSocket.cpp',
     'ClientSocket.cpp',
     'IOEvent.cpp',
+    'PacketStream.cpp',
+    'Packet.cpp',
+    'TcpConnection.cpp',
     ]
 
 env.SharedLibrary(target = 'tnet_network',

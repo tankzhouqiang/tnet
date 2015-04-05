@@ -9,10 +9,6 @@ TcpAcceptor::TcpAcceptor()
 }
 
 TcpAcceptor::~TcpAcceptor() {
-    if (_serverAdapter) {
-        delete _serverAdapter;
-        _serverAdapter = NULL;
-    }
 }
 
 bool TcpAcceptor::init(const string& ip, int port, 

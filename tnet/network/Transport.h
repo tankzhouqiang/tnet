@@ -6,6 +6,7 @@
 #include <tnet/network/ClientAdapter.h>
 #include <tnet/network/EpollEvent.h>
 #include <tnet/network/TcpAcceptor.h>
+#include <tnet/network/PacketStream.h>
 #include <tnet/util/Thread.h>
 
 TNET_BEGIN_NAMESPACE(network);
@@ -22,7 +23,8 @@ private:
     Transport(const Transport &);
     Transport& operator=(const Transport &);
 public:
-    bool init(const std::string& spec, ServerAdapter *adapter);
+    bool init(const std::string& spec, PacketStream *packetStream, 
+              ServerAdapter *adapter);
     //server interface
     void setThreadCount(uint32_t threadCount);
     //spec format IP:PORT
@@ -32,7 +34,7 @@ public:
 
     //client interface
     //spec format IP:PORT
-    bool connect(const std::string& spec, ClientAdapter *adapter, void *args);
+    bool connect(const std::string& spec, PacketStream *packetStream);
 
     //start server one io thread and one timeout checkthread.
     bool startClient();
@@ -40,6 +42,8 @@ public:
     void stop();
 private:
     bool ioLoop();
+public:
+    //public for test
     bool parseAddress(const std::string& spec, std::string& ip, int& port);
 private:
     TcpAcceptor *_tcpAcceptor;

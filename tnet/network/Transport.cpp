@@ -20,7 +20,9 @@ Transport::~Transport() {
     DELETE_AND_SET_NULL(_tcpAcceptor);
 }
 
-bool Transport::init(const string& spec, ServerAdapter *adapter) {
+bool Transport::init(const string& spec, PacketStream *packetStream, 
+                     ServerAdapter *adapter)
+ {
     assert(adapter);
     _tcpAcceptor = new TcpAcceptor();
     string ip;
@@ -71,15 +73,13 @@ bool Transport::startServer() {
 }
 
 
-bool Transport::connect(const string& spec, ClientAdapter *adapter, 
-                        void *args)
+bool Transport::connect(const string& spec, PacketStream *packetStream)
 {
     string ip;
     int port;
     if (!parseAddress(spec, ip, port)) {
         return false;
     }
-    
 }
 
 bool Transport::startClient() {

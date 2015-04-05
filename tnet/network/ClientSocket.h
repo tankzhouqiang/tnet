@@ -2,20 +2,23 @@
 #define TNET_CLIENTSOCKET_H
 
 #include <tnet/common/Common.h>
+#include <tnet/network/Socket.h>
 
 TNET_BEGIN_NAMESPACE(network);
 
-class ClientSocket
+class ClientSocket : public Socket
 {
 public:
-    ClientSocket();
+    ClientSocket(const std::string& serverIp, int serverPort);
     ~ClientSocket();
 private:
     ClientSocket(const ClientSocket &);
     ClientSocket& operator=(const ClientSocket &);
 public:
-
+    bool connect();
 private:
+    std::string _serverIP;
+    int _serverPort;
 };
 
 TNET_TYPEDEF_PTR(ClientSocket);
