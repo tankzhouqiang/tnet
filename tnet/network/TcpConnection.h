@@ -2,10 +2,11 @@
 #define TNET_TCPCONNECTION_H
 
 #include <tnet/common/Common.h>
+#include <tnet/network/IOComponent.h>
 
 TNET_BEGIN_NAMESPACE(network);
 
-class TcpConnection
+class TcpConnection : public IOComponent
 {
 public:
     TcpConnection();
@@ -14,7 +15,7 @@ private:
     TcpConnection(const TcpConnection &);
     TcpConnection& operator=(const TcpConnection &);
 public:
-    bool init(const std::string&ip, const std::string& port);
+    bool init(const std::string&ip, int port);
 private:
 };
 

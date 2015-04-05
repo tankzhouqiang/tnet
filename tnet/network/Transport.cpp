@@ -80,6 +80,7 @@ bool Transport::connect(const string& spec, PacketStream *packetStream)
     if (!parseAddress(spec, ip, port)) {
         return false;
     }
+    //todo who to delete the tcpconnection and tcpaccept;
 }
 
 bool Transport::startClient() {

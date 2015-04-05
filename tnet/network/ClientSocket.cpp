@@ -12,7 +12,7 @@ ClientSocket::ClientSocket(const string& serverIp, int serverPort)
 ClientSocket::~ClientSocket() { 
 }
 
-bool ClientSocket::connect() {
+bool ClientSocket::init() {
     if (!socket()) {
         return false;
     }

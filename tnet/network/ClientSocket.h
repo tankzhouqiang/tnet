@@ -15,7 +15,7 @@ private:
     ClientSocket(const ClientSocket &);
     ClientSocket& operator=(const ClientSocket &);
 public:
-    bool connect();
+    bool init();
 private:
     std::string _serverIP;
     int _serverPort;
