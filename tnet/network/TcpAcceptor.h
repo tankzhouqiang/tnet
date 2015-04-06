@@ -19,9 +19,9 @@ private:
 public:
     bool init(const std::string& ip, int port, ServerAdapter *adapter);
 
-    virtual void handleReadEvent() {assert(false);}
-    virtual void handleWriteEvent() {assert(false);}
-    virtual void handleErrorEvent() {assert(false);};
+    /*override*/ virtual void handleReadEvent() {assert(false);}
+    /*override*/ virtual void handleWriteEvent() {assert(false);}
+    /*override*/ virtual void handleErrorEvent() {assert(false);};
 private:
     ServerAdapter *_serverAdapter;
 };

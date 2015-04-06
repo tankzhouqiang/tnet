@@ -6,8 +6,10 @@
 #include <tnet/network/ClientAdapter.h>
 #include <tnet/network/EpollEvent.h>
 #include <tnet/network/TcpAcceptor.h>
+#include <tnet/network/TcpConnection.h>
 #include <tnet/network/PacketStream.h>
 #include <tnet/util/Thread.h>
+#include <tnet/util/Lock.h>
 
 TNET_BEGIN_NAMESPACE(network);
 
@@ -46,7 +48,8 @@ public:
     //public for test
     bool parseAddress(const std::string& spec, std::string& ip, int& port);
 private:
-    TcpAcceptor *_tcpAcceptor;
+    std::vector<IOComponent*> _ioComponentVec;
+    util::ThreadMutex _ioComponentVecLock;
     EpollEvent *_epollEvent;
     util::ThreadPtr _ioThreadPtr;
     bool _start;

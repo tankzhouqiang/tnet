@@ -9,35 +9,37 @@ TNET_BEGIN_NAMESPACE(network);
 const string Transport::IP_PORT_SEPARATOR = ":";
 
 Transport::Transport() 
-    : _tcpAcceptor(NULL)
-    , _epollEvent(NULL)
+    : _epollEvent(NULL)
     , _start(false)
 { 
 }
 
 Transport::~Transport() { 
     DELETE_AND_SET_NULL(_epollEvent);
-    DELETE_AND_SET_NULL(_tcpAcceptor);
 }
 
 bool Transport::init(const string& spec, PacketStream *packetStream, 
                      ServerAdapter *adapter)
  {
     assert(adapter);
-    _tcpAcceptor = new TcpAcceptor();
     string ip;
     int port;
     if (!parseAddress(spec, ip, port)) {
         return false;
     }
-    if (!_tcpAcceptor->init(ip, port, adapter)) {
+    TcpAcceptor *tcpAcceptor = new TcpAcceptor();
+    if (!tcpAcceptor->init(ip, port, adapter)) {
         return false;
     }
     _epollEvent = new EpollEvent();
-    Socket *socket = _tcpAcceptor->getSocket();
-    if (!_epollEvent->addEvent(socket, true, true)) {
+    Socket *socket = tcpAcceptor->getSocket();
+    if (!_epollEvent->addEvent(socket, true, false)) {
         LOG(ERROR) << "add epoll listen event error" << endl;
         return false;
+    }
+    {
+        ScopedLock lock(_ioComponentVecLock);
+        _ioComponentVec.push_back(tcpAcceptor);
     }
     return true;
 }
@@ -80,7 +82,22 @@ bool Transport::connect(const string& spec, PacketStream *packetStream)
     if (!parseAddress(spec, ip, port)) {
         return false;
     }
-    //todo who to delete the tcpconnection and tcpaccept;
+    TcpConnection *connection = new TcpConnection();
+    if (!connection->init(ip, port, packetStream)) {
+        LOG(ERROR) << "tcp connection error";
+        return false;
+    }
+    Socket *socket = connection->getSocket();
+    assert(socket);
+    if (!_epollEvent->addEvent(socket, true, true)) {
+        LOG(ERROR) << "connect epoll add event error.";
+        return false;
+    }
+    {
+        ScopedLock lock(_ioComponentVecLock);
+        _ioComponentVec.push_back(connection);
+    }
+    return true;
 }
 
 bool Transport::startClient() {

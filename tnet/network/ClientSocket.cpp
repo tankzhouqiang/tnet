@@ -21,9 +21,9 @@ bool ClientSocket::init() {
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = inet_addr(_serverIP.data());
     serverAddr.sin_port = htons(static_cast<short>(_serverPort));
-    bool ret = ::connect(_socketFd, (const struct sockaddr*) &serverAddr, 
+    int ret = ::connect(_socketFd, (const struct sockaddr*) &serverAddr, 
                          sizeof(serverAddr));
-    return ret;
+    return ret == 0;
 }
 
 TNET_END_NAMESPACE(network);

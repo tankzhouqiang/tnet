@@ -6,6 +6,7 @@ libutil_sources = [
     'StringUtilTest.cpp',
     'mainTest.cpp',
     'ThreadTest.cpp',
+    'LockTest.cpp',
     ]
 
 env.Program('tnet_util_test',
