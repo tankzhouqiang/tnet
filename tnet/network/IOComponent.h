@@ -23,6 +23,11 @@ public:
     Socket* getSocket() const {
         return _socket;
     }
+
+    void setSocket(Socket *socket) {
+        assert(socket);
+        _socket = socket;
+    }
 protected:
     Socket *_socket;
 };

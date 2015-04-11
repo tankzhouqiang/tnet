@@ -29,11 +29,13 @@ bool Transport::init(const string& spec, PacketStream *packetStream,
     if (!parseAddress(spec, ip, port)) {
         return false;
     }
+    _epollEvent = new EpollEvent();
+    
     TcpAcceptor *tcpAcceptor = new TcpAcceptor();
-    if (!tcpAcceptor->init(ip, port, adapter)) {
+    if (!tcpAcceptor->init(ip, port, adapter, _epollEvent)) {
         return false;
     }
-    _epollEvent = new EpollEvent();
+
     Socket *socket = tcpAcceptor->getSocket();
     if (!_epollEvent->addEvent(socket, true, false)) {
         LOG(ERROR) << "add epoll listen event error" << endl;

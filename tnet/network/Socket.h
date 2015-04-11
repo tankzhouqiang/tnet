@@ -29,8 +29,13 @@ public:
     int getSocketFd() const {
         return _socketFd;
     }
+    void setSocketFd(int socketFd) {
+        _socketFd = socketFd;
+    }
 protected:
     bool socket();
+
+protected:
     int _socketFd;
 private:
     IOComponent *_ioComponent;

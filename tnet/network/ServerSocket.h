@@ -12,16 +12,17 @@ public:
     static const int DEFAULT_BACK_LOG = 256;
 public:
     ServerSocket(const std::string& ip, int port);
+    ServerSocket() {}
     ~ServerSocket();
 private:
     ServerSocket(const ServerSocket &);
     ServerSocket& operator=(const ServerSocket &);
 public:
     /*overvide*/ bool init();
-private:
+public:
     bool bind(const struct sockaddr_in& serverAddr);
     bool listen();
-    bool accept();
+    ServerSocket* accept();
 private:
     int _backLog;
     std::string _ip;

@@ -48,8 +48,18 @@ bool ServerSocket::listen() {
     return true;
 }
 
-bool ServerSocket::accept() {
+ServerSocket* ServerSocket::accept() {
+    struct sockaddr clientAddr;
+    socklen_t len;
+    int connFd = ::accept(_socketFd, &clientAddr, &len);
+    if (connFd < 0) {
+        LOG(ERROR) << "accept error" << endl;
+        return NULL;
+    }
     
+    ServerSocket *socket = new ServerSocket();
+    socket->setSocketFd(connFd);
+    return socket;
 }
 
 TNET_END_NAMESPACE(network);

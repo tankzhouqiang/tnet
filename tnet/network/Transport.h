@@ -12,6 +12,7 @@
 #include <tnet/util/Lock.h>
 
 TNET_BEGIN_NAMESPACE(network);
+class TcpAcceptor;
 
 class Transport
 {
@@ -40,6 +41,12 @@ public:
     bool connect(const std::string& spec, PacketStream *packetStream);
 
     void stop();
+    
+    void addIOComponent(IOComponent *iocomponent) {
+        assert(iocomponent);
+        util::ScopedLock lock(_ioComponentVecLock);
+        _ioComponentVec.push_back(iocomponent);
+    }
 private:
     bool ioLoop();
 public:
