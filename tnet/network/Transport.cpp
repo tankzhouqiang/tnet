@@ -1,6 +1,8 @@
 #include <tnet/network/Transport.h>
 #include <tnet/util/StringUtil.h>
+#include <tnet/util/Thread.h>
 #include <stdlib.h>
+
 using namespace std;
 TNET_USE_NAMESPACE(util);
 
@@ -71,7 +73,16 @@ bool Transport::ioLoop() {
     }
 }
 
-bool Transport::startServer() {
+bool Transport::start() {
+    _start = true;
+    
+    _ioThreadPtr = Thread::createThread(
+            tr1::bind(&Transport::ioLoop, this));
+    if (!_ioThreadPtr) {
+        LOG(ERROR) << "start io thread error" << endl;
+        return false;
+    }
+    return true;
 }
 
 
@@ -100,8 +111,6 @@ bool Transport::connect(const string& spec, PacketStream *packetStream)
     return true;
 }
 
-bool Transport::startClient() {
-}
 
 void Transport::stop() {
 }

@@ -31,15 +31,13 @@ public:
     void setThreadCount(uint32_t threadCount);
     //spec format IP:PORT
     bool listen(const std::string& spec, ServerAdapter *adapter);
-    //start server multi io thread and one timeout checkthread.
-    bool startServer();
+
+    //start io thread and one timeout checkthread.
+    bool start();
 
     //client interface
     //spec format IP:PORT
     bool connect(const std::string& spec, PacketStream *packetStream);
-
-    //start server one io thread and one timeout checkthread.
-    bool startClient();
 
     void stop();
 private:
@@ -52,6 +50,7 @@ private:
     util::ThreadMutex _ioComponentVecLock;
     EpollEvent *_epollEvent;
     util::ThreadPtr _ioThreadPtr;
+    util::ThreadPtr _checkTimeoutThreadPtr;
     bool _start;
 };
 
