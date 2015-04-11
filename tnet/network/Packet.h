@@ -7,8 +7,10 @@ TNET_BEGIN_NAMESPACE(network);
 
 class PacketHeader {
 public:
-    PacketHeader（）
-    : _sessionId(0) ,_type(-1)  ,_dataLen（-1）
+    PacketHeader()
+        : _sessionId(0) 
+        ,_type(-1)
+        ,_dataLen(-1)
     {
     }
 public:

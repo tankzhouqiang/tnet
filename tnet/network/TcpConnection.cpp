@@ -24,7 +24,18 @@ bool TcpConnection::init(const string&ip, int port,
     assert(packetStream);
     _packetStream = packetStream;
     return _socket->init();
- }
+}
 
+bool TcpConnection::postPacket(Packet *packet) {
+    if (!packet) {
+        LOG(ERROR) << "packet is empty" << endl;
+        return false;
+    }
+    {
+        util::ScopedLock lock(_packetLock);
+        _packetList.push_back(packet);
+    }
+    return true;
+}
 TNET_END_NAMESPACE(network);
 

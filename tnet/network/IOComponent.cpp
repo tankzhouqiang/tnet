@@ -8,7 +8,10 @@ IOComponent::IOComponent()
 }
 
 IOComponent::~IOComponent() { 
-    
+    if (_socket) {
+        delete _socket;
+        _socket = NULL;
+    }
 }
 
 TNET_END_NAMESPACE(network);

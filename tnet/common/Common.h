@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <iostream>
+#include <list>
 #include <stdio.h>
 #include <libgen.h>
 #include <glog/logging.h>
