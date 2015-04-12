@@ -36,9 +36,11 @@ bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
         LOG(ERROR) << "packet is empty" << endl;
         return false;
     }
-    uint32_t sessionId = _sessionPool.allocateSession(
-            packetHandler, args);
-    packet->setSessionId(sessionId);
+    if (!_isServer) {
+        uint32_t sessionId = _sessionPool.allocateSession(
+                packetHandler, args);
+        packet->setSessionId(sessionId);
+    }
     {
         util::ScopedLock lock(_packetLock);
         _packetList.push_back(packet);
@@ -47,6 +49,7 @@ bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
 }
 
 void TcpConnection::handleReadEvent() {
+    
 }
 
 void TcpConnection::handleWriteEvent() {

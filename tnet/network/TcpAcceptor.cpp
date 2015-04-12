@@ -43,6 +43,7 @@ void TcpAcceptor::handleReadEvent() {
     }
     TcpConnection *connection = new TcpConnection();
     connection->setSocket(newSocket);
+    connection->setServerAdapter(_serverAdapter);
     connection->setIsServer(true);
     assert(_ownTransport);
     _ownTransport->addIOComponent(connection);

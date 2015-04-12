@@ -18,6 +18,11 @@ Transport::Transport()
 
 Transport::~Transport() { 
     DELETE_AND_SET_NULL(_epollEvent);
+    std::vector<IOComponent*>::iterator it = _ioComponentVec.begin();
+    for (; it != _ioComponentVec.end(); ++it) {
+        delete *it;
+    }
+    _ioComponentVec.clear();
 }
 
 bool Transport::init(const string& spec, PacketStream *packetStream, 
