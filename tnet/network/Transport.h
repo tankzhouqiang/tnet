@@ -3,7 +3,7 @@
 
 #include <tnet/common/Common.h>
 #include <tnet/network/ServerAdapter.h>
-#include <tnet/network/ClientAdapter.h>
+#include <tnet/network/IPacketHandler.h>
 #include <tnet/network/EpollEvent.h>
 #include <tnet/network/TcpAcceptor.h>
 #include <tnet/network/TcpConnection.h>

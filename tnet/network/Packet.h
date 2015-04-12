@@ -8,15 +8,15 @@ TNET_BEGIN_NAMESPACE(network);
 class PacketHeader {
 public:
     PacketHeader()
-        : _sessionId(0) 
+        : _packetLen(-1)
+        , _sessionId(0) 
         ,_type(-1)
-        ,_dataLen(-1)
     {
     }
 public:
+    int _packetLen;
     uint32_t _sessionId;
     int _type;
-    int _dataLen;
 };
 
 class Packet

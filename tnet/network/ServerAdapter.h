@@ -14,7 +14,7 @@ private:
     ServerAdapter(const ServerAdapter &);
     ServerAdapter& operator=(const ServerAdapter &);
 public:
-
+    
 private:
 };
 

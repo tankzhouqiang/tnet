@@ -3,8 +3,9 @@ import os
 Import('env')
 
 libnetwork_sources = [
+    'mainTest.cpp',
     'TransportTest.cpp',
-    'mainTest.cpp'
+    'SessionPoolTest.cpp',
     ]
 
 env.Program('tnet_network_test',

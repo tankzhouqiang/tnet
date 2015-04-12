@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <libgen.h>
 #include <glog/logging.h>
+#include <map>
 
 #define DELETE_AND_SET_NULL(object)  if (object) { delete object; object = NULL;}
 

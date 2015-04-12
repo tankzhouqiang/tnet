@@ -5,6 +5,7 @@ env.MergeFlags('-I.')
 libutil_sources = [
     'StringUtil.cpp',
     'Thread.cpp',
+    'MemPool.cpp',
     ]
 
 env.SharedLibrary(target = 'tnet_util',
