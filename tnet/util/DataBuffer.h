@@ -102,12 +102,12 @@ public:
     /*
      * 写函数
      */
-    void writeInt8(uint8_t n) {
+    void writeUInt8(uint8_t n) {
         expand(1);
         *_pfree++ = (unsigned char)n;
     }
 
-    void writeInt16(uint16_t n) {
+    void writeUInt16(uint16_t n) {
         expand(2);
         _pfree[1] = (unsigned char)n;
         n = static_cast<uint16_t>(n >> 8);
@@ -118,7 +118,7 @@ public:
     /*
      * 写出整型
      */
-    void writeInt32(uint32_t n) {
+    void writeUInt32(uint32_t n) {
         expand(4);
         _pfree[3] = (unsigned char)n;
         n >>= 8;
@@ -130,7 +130,7 @@ public:
         _pfree += 4;
     }
 
-    void writeInt64(uint64_t n) {
+    void writeUInt64(uint64_t n) {
         expand(8);
         _pfree[7] = (unsigned char)n;
         n >>= 8;
@@ -204,7 +204,7 @@ public:
         int len = (str ? static_cast<int32_t>(strlen(str)) : 0);
         if (len>0) len ++;
         expand(static_cast<int32_t>(len+sizeof(uint32_t)));
-        writeInt32(len);
+        writeUInt32(len);
         if (len>0) {
             memcpy(_pfree, str, len);
             _pfree += (len);
@@ -220,44 +220,44 @@ public:
      */
     void writeVector(const std::vector<int32_t>& v) {
         const uint32_t iLen = static_cast<uint32_t>(v.size());
-        writeInt32(iLen);
+        writeUInt32(iLen);
         for (uint32_t i = 0; i < iLen; ++i) {
-             writeInt32(v[i]); 
+             writeUInt32(v[i]); 
         }
     }
 
     void writeVector(const std::vector<uint32_t>& v) {
         const uint32_t iLen = static_cast<uint32_t>(v.size());
-        writeInt32(iLen);
+        writeUInt32(iLen);
         for (uint32_t i = 0; i < iLen; ++i) {
-             writeInt32(v[i]);
+             writeUInt32(v[i]);
         } 
     }
 
     void writeVector(const std::vector<int64_t>& v) {
         const uint32_t iLen = static_cast<uint32_t>(v.size());
-        writeInt32(iLen);
+        writeUInt32(iLen);
         for (uint32_t i = 0; i < iLen; ++i) {
-             writeInt64(v[i]);
+             writeUInt64(v[i]);
         }
     }
 
     void writeVector(const std::vector<uint64_t>& v) {
         const uint32_t iLen = static_cast<uint32_t>(v.size());
-        writeInt32(iLen);
+        writeUInt32(iLen);
         for (uint32_t i = 0; i < iLen; ++i) {
-             writeInt64(v[i]);
+             writeUInt64(v[i]);
         }
     }
 
     /*
      * 读函数
      */
-    uint8_t readInt8() {
+    uint8_t readUInt8() {
         return (*_pdata++);
     }
 
-    uint16_t readInt16() {
+    uint16_t readUInt16() {
         uint16_t n = _pdata[0];
         n = static_cast<uint16_t>(n << 8);
         n = static_cast<uint16_t>(n | _pdata[1]);
@@ -265,7 +265,7 @@ public:
         return n;
     }
 
-    uint32_t readInt32() {
+    uint32_t readUInt32() {
         uint32_t n = _pdata[0];
         n <<= 8;
         n |= _pdata[1];
@@ -278,7 +278,7 @@ public:
         return n;
     }
 
-    uint64_t readInt64() {
+    uint64_t readUInt64() {
         uint64_t n = _pdata[0];
         n <<= 8;
         n |= _pdata[1];
@@ -316,7 +316,7 @@ public:
         if (_pdata + sizeof(int) > _pfree) {
             return false;
         }
-        int slen = readInt32();
+        int slen = readUInt32();
         if (_pfree - _pdata < slen) {
             slen = static_cast<int32_t>(_pfree - _pdata);
         }
@@ -340,33 +340,33 @@ public:
      * 读取一列表
      */
     bool readVector(std::vector<int32_t>& v) {
-         const uint32_t len = readInt32();
+         const uint32_t len = readUInt32();
          for (uint32_t i = 0; i < len; ++i) {
-             v.push_back(readInt32());
+             v.push_back(readUInt32());
          }
          return true; 
     }
 
     bool readVector(std::vector<uint32_t>& v) {
-         const uint32_t len = readInt32();
+         const uint32_t len = readUInt32();
          for (uint32_t i = 0; i < len; ++i) {
-             v.push_back(readInt32());
+             v.push_back(readUInt32());
          }
          return true; 
     }
 
     bool readVector(std::vector<int64_t>& v) {
-         const uint32_t len = readInt32();
+         const uint32_t len = readUInt32();
          for (uint32_t i = 0; i < len; ++i) {
-             v.push_back(readInt64());
+             v.push_back(readUInt64());
          }
          return true; 
     }
 
     bool readVector(std::vector<uint64_t>& v) {
-         const uint32_t len = readInt32();
+         const uint32_t len = readUInt32();
          for (uint32_t i = 0; i < len; ++i) {
-             v.push_back(readInt64());
+             v.push_back(readUInt64());
          }
          return true; 
     }
@@ -413,7 +413,7 @@ private:
                 unsigned char *newbuf = (unsigned char *)malloc(bufsize);
                 if (newbuf == NULL)
                 {
-                  TBSYS_LOG(ERROR, "expand data buffer failed, length: %d", bufsize);
+                    LOG(ERROR) <<  "expand data buffer failed, length: " <<  bufsize;
                 }
                 assert(newbuf != NULL);
                 if (dlen > 0) {

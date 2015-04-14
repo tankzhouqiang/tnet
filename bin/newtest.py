@@ -69,7 +69,7 @@ def createTestClassCPP(path, classname):
 	context = context + "    " +  "}\n"
 	context = context +  "};\n"
 	context = context +  "\n"
-	context = context + "TEST_F(" + classname + "Test, ) {\n"
+	context = context + "TEST_F(" + classname + "Test,  simpleProcess) {\n"
 	context = context +  "}\n"
 	context = context +  "\n"
 	context = context + "TNET_END_NAMESPACE(" + ns + ");" + "\n"

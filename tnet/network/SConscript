@@ -19,6 +19,7 @@ libnetwork_sources = [
     'IPacketHandler.cpp',
     'SessionPool.cpp',
     'Session.cpp',
+    'DefaultPacketStream.cpp',
     ]
 
 env.SharedLibrary(target = 'tnet_network',

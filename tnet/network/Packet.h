@@ -8,22 +8,22 @@ TNET_BEGIN_NAMESPACE(network);
 class PacketHeader {
 public:
     PacketHeader()
-        : _packetLen(-1)
+        : _bodyLen(0)
         , _sessionId(0) 
-        ,_type(-1)
+        ,_type(0)
     {
     }
 public:
-    int _packetLen;
+    uint32_t _bodyLen;
     uint32_t _sessionId;
-    int _type;
+    uint32_t _type;
 };
 
 class Packet
 {
 public:
     Packet();
-    ~Packet();
+    virtual ~Packet();
 private:
     Packet(const Packet &);
     Packet& operator=(const Packet &);
@@ -41,6 +41,12 @@ public:
         return _header._type;
     }
     
+    void setBodyLen(int bodyLen) {
+        _header._bodyLen = bodyLen;
+    }
+    int getBodyLen() const {
+        return _header._bodyLen;
+    }
 private:
     PacketHeader _header;
 };

@@ -3,6 +3,7 @@
 
 #include <tnet/common/Common.h>
 #include <tnet/network/Packet.h>
+#include <tnet/util/DataBuffer.h>
 
 TNET_BEGIN_NAMESPACE(network);
 
@@ -15,9 +16,8 @@ private:
     PacketStream(const PacketStream &);
     PacketStream& operator=(const PacketStream &);
 public:
-    virtual Packet* createPacket() = 0;
-    virtual bool encode() = 0;
-    virtual bool decode() = 0;
+    virtual bool encode(Packet *packet, util::DataBuffer *dataBuffer) = 0;
+    virtual bool decode(util::DataBuffer *dataBuffer, Packet *packet) = 0;
 private:
 };
 
