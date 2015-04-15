@@ -29,20 +29,16 @@ TEST_F(DefaultPacketStreamTest, simpleProcess) {
     util::DataBuffer dataBuffer;
     ASSERT_TRUE(defaultPacketStream.encode(packet, &dataBuffer));
     delete packet;
-    DefaultPacket *decodePacket;
-    ASSERT_TRUE(defaultPacketStream.decode(&dataBuffer, decodePacket));
-    DefaultPacket *defaultPacket = dynamic_cast<DefaultPacket*> (decodePacket);
-    assert(defaultPacket);
-    cout << defaultPacket->getSessionId() << endl;
-    ASSERT_EQ((uint32_t)1, defaultPacket->getSessionId());
-    ASSERT_EQ((int32_t)2, defaultPacket->getPacketType());
-    ASSERT_EQ((int32_t)10, defaultPacket->getBodyLen());
-    char *decodeBuf = (char*) defaultPacket->getBody();
+    DefaultPacket decodePacket;
+    ASSERT_TRUE(defaultPacketStream.decode(&dataBuffer, &decodePacket));
+    ASSERT_EQ((uint32_t)1, decodePacket.getSessionId());
+    ASSERT_EQ((int32_t)2, decodePacket.getPacketType());
+    ASSERT_EQ((int32_t)9, decodePacket.getBodyLen());
+    char *decodeBuf = (char*) decodePacket.getBody();
     for (uint32_t i = 0; i < 9; ++i) {
         ASSERT_EQ(buf[i], *(decodeBuf + i));
     }
     free(decodeBuf);
-    delete defaultPacket;
 }
 
 TNET_END_NAMESPACE(network);

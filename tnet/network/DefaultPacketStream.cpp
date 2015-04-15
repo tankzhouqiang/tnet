@@ -19,8 +19,8 @@ bool DefaultPacketStream::encode(Packet *packet,
     uint32_t bodyLen = defaultPacket->getBodyLen();
     dataBuffer->writeUInt32(bodyLen);
     dataBuffer->writeUInt32(defaultPacket->getSessionId());
-    dataBuffer->writeUInt32(defaultPacket->getSessionId());
-    memcpy(dataBuffer->getFree(), defaultPacket->getBody(), bodyLen);
+    dataBuffer->writeUInt32(defaultPacket->getPacketType());
+    dataBuffer->writeBytes(defaultPacket->getBody(), bodyLen);
     return true;
 }
 
@@ -28,17 +28,18 @@ bool DefaultPacketStream::decode(util::DataBuffer *dataBuffer,
             Packet *packet)
 {
     assert(dataBuffer);
-    DefaultPacket *defaultPacket = new DefaultPacket();
+    DefaultPacket *defaultPacket = dynamic_cast<DefaultPacket*>(packet);
     uint32_t bodyLen = dataBuffer->readUInt32();
-    cout << "33333333333333333" << bodyLen << endl;
     defaultPacket->setBodyLen(bodyLen);
     uint32_t sessionId = dataBuffer->readUInt32();
-    cout << "33333333333333333" << sessionId << endl;
     defaultPacket->setSessionId(sessionId);
     uint32_t packetType = dataBuffer->readUInt32();
     defaultPacket->setPacketType(packetType);
     void *packetBody = malloc(bodyLen);
-    dataBuffer->readBytes(packetBody, bodyLen);
+    if (!dataBuffer->readBytes(packetBody, bodyLen)) {
+        LOG(ERROR) << "read packet body error." << endl;
+        return false;
+    }
     defaultPacket->setBody(packetBody);
     packet = defaultPacket;
     return true;
