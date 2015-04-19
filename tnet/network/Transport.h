@@ -30,17 +30,18 @@ public:
               ServerAdapter *adapter);
     //server interface
     void setThreadCount(uint32_t threadCount);
-    //spec format IP:PORT
-    bool listen(const std::string& spec, ServerAdapter *adapter);
 
     //start io thread and one timeout checkthread.
     bool start();
 
     //client interface
     //spec format IP:PORT
-    bool connect(const std::string& spec, PacketStream *packetStream);
+    TcpConnection* connect(const std::string& spec, 
+                           PacketStream *packetStream);
 
     void stop();
+
+    void wait();
     
     void addIOComponent(IOComponent *iocomponent) {
         assert(iocomponent);

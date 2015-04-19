@@ -2,6 +2,7 @@
 #define TNET_STRINGUTIL_H
 
 #include <tnet/common/Common.h>
+#include <sstream>
 
 TNET_BEGIN_NAMESPACE(util);
 
@@ -13,7 +14,8 @@ public:
 public:
     static std::vector<std::string> split(const std::string& text, 
             const std::string &sep, bool ignoreEmpty = true);
-    
+    template<typename T>
+    static std::string toString(const T &x);
 private:
     StringUtil(const StringUtil &);
     StringUtil& operator=(const StringUtil &);
@@ -21,6 +23,14 @@ public:
 
 private:
 };
+
+template<typename T>
+inline std::string StringUtil::toString(const T &x) {
+    std::stringstream oss;
+    oss << x;
+    return oss.str();    
+}
+
 
 TNET_TYPEDEF_PTR(StringUtil);
 

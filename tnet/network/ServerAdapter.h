@@ -3,8 +3,10 @@
 
 #include <tnet/common/Common.h>
 #include <tnet/network/Packet.h>
+#include <tnet/network/TcpConnection.h>
 
 TNET_BEGIN_NAMESPACE(network);
+class TcpConnection;
 
 class ServerAdapter
 {
@@ -15,7 +17,8 @@ private:
     ServerAdapter(const ServerAdapter &);
     ServerAdapter& operator=(const ServerAdapter &);
 public:
-    virtual void handlePacket(Packet *packet) = 0;
+    virtual void handlePacket(Packet *packet, 
+                              TcpConnection *connection) = 0;
 private:
 };
 

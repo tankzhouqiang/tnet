@@ -1,0 +1,15 @@
+# -*- mode: python -*-
+Import('env')
+env.MergeFlags('-I.')
+
+env.Program(target = "EchoServer.cpp" , 
+            LIBS=['tnet_network', 'tnet_common', 'tnet_util', "glog", "pthread"], 
+            LIBPATH=['../../lib', '../network', "../util", "../common"]
+            )
+
+env.Program(target = "EchoClient.cpp" , 
+            LIBS=['tnet_network', 'tnet_common', 'tnet_util', "glog", "pthread"], 
+            LIBPATH=['../../lib', '../network', "../util", "../common"]
+            )
+
+

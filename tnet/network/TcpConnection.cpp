@@ -53,7 +53,7 @@ Packet* TcpConnection::getOnePacket() {
     DataBuffer dataBuffer;
     dataBuffer.ensureFree(PacketHeader::PACKET_HEADER_LEN);
     
-    if (_socket->readn((void*)dataBuffer.getFree(), 
+    if (_socket->readn((void*)dataBuffer.getData(), 
                        PacketHeader::PACKET_HEADER_LEN)
         != PacketHeader::PACKET_HEADER_LEN) 
     {
@@ -67,6 +67,11 @@ Packet* TcpConnection::getOnePacket() {
     {
         return NULL;
     }
+    cout << "bodyLen" << bodyLen << endl;
+    for (uint32_t i = 0; i < bodyLen; ++i) {
+        cout << *((char*) dataBuffer.getData() + i) << endl;
+    }
+
     Packet *packet = _packetStream->decode(&dataBuffer);
     if (packet) {
         LOG(ERROR) << "decode packet error" << endl;
@@ -77,12 +82,13 @@ Packet* TcpConnection::getOnePacket() {
 
 void TcpConnection::handleReadEvent() {
     while (true) {
+        cout << "handleReadEvent in tcpconnection" << endl;
         Packet *packet = getOnePacket();
         if (!packet)  {
             break;
         }
         if (_isServer) {
-            _serverAdapter->handlePacket(packet);
+            _serverAdapter->handlePacket(packet, this);
         } else {
             uint32_t sessionId = packet->getSessionId();
             Session *session = _sessionPool.getSession(sessionId);
@@ -90,6 +96,7 @@ void TcpConnection::handleReadEvent() {
                 LOG(ERROR) << "session Id " << sessionId << "is not existed" << endl;
                 continue;
             }
+            cout << "client recvie sessionId" << sessionId << endl;
             IPacketHandler *_handler = session->_handler;
             _handler->handlePacket(packet, session->_args);
         }
@@ -111,6 +118,7 @@ void TcpConnection::handleWriteEvent() {
             continue;
         }
         int dataLen = dataBuffer.getDataLen();
+        cout << "write data" << dataLen << endl;
         if (_socket->writen(dataBuffer.getData(), dataLen) != dataLen)
         {
             LOG(ERROR) << "write data error" << endl;

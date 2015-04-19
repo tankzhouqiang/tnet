@@ -17,6 +17,7 @@ bool DefaultPacketStream::encode(Packet *packet,
     DefaultPacket *defaultPacket = dynamic_cast<DefaultPacket*> (packet);
     assert(defaultPacket);
     uint32_t bodyLen = defaultPacket->getBodyLen();
+    cout << "encode bodylen" << bodyLen << endl;
     dataBuffer->writeUInt32(bodyLen);
     dataBuffer->writeUInt32(defaultPacket->getSessionId());
     dataBuffer->writeUInt32(defaultPacket->getPacketType());

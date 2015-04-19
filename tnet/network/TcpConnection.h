@@ -10,6 +10,7 @@
 #include <tnet/util/Lock.h>
 
 TNET_BEGIN_NAMESPACE(network);
+class ServerAdapter;
 
 class TcpConnection : public IOComponent
 {
@@ -24,8 +25,9 @@ private:
 public:
     bool init(const std::string&ip, int port, 
               PacketStream *packetStream);
-    bool postPacket(Packet *packet, IPacketHandler *packetHandler, 
-                    void *args);
+    bool postPacket(Packet *packet, 
+                    IPacketHandler *packetHandler = NULL, 
+                    void *args = NULL);
     void setIsServer(bool isServer) {
         _isServer = isServer;
     }

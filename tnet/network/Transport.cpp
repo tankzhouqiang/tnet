@@ -11,9 +11,9 @@ TNET_BEGIN_NAMESPACE(network);
 const string Transport::IP_PORT_SEPARATOR = ":";
 
 Transport::Transport() 
-    : _epollEvent(NULL)
-    , _start(false)
-{ 
+    : _start(false)
+{
+    _epollEvent = new EpollEvent(); 
 }
 
 Transport::~Transport() { 
@@ -34,13 +34,12 @@ bool Transport::init(const string& spec, PacketStream *packetStream,
     if (!parseAddress(spec, ip, port)) {
         return false;
     }
-    _epollEvent = new EpollEvent();
     
     TcpAcceptor *tcpAcceptor = new TcpAcceptor();
     if (!tcpAcceptor->init(ip, port, adapter, _epollEvent)) {
         return false;
     }
-
+    tcpAcceptor->setTransport(this);
     Socket *socket = tcpAcceptor->getSocket();
     if (!_epollEvent->addEvent(socket, true, false)) {
         LOG(ERROR) << "add epoll listen event error" << endl;
@@ -68,6 +67,7 @@ bool Transport::ioLoop() {
                 continue;
             }
             if (ioEvents[i]._readOccurred == true) {
+                cout << "handleReadEvent" << endl;
                 ioComponent->handleReadEvent();
             }
             if (ioEvents[i]._writeOccurred == true) {
@@ -92,34 +92,40 @@ bool Transport::start() {
     return true;
 }
 
+void Transport::wait() {
+    while (_start) {
+        usleep(1000);
+    }
+}
 
-bool Transport::connect(const string& spec, PacketStream *packetStream)
+void Transport::stop() {
+    _start = true;
+}
+
+TcpConnection* Transport::connect(const string& spec, 
+                                  PacketStream *packetStream)
 {
     string ip;
     int port;
     if (!parseAddress(spec, ip, port)) {
-        return false;
+        return NULL;
     }
     TcpConnection *connection = new TcpConnection();
     if (!connection->init(ip, port, packetStream)) {
         LOG(ERROR) << "tcp connection error";
-        return false;
+        return NULL;
     }
     Socket *socket = connection->getSocket();
     assert(socket);
     if (!_epollEvent->addEvent(socket, true, true)) {
         LOG(ERROR) << "connect epoll add event error.";
-        return false;
+        return NULL;
     }
     {
         ScopedLock lock(_ioComponentVecLock);
         _ioComponentVec.push_back(connection);
     }
-    return true;
-}
-
-
-void Transport::stop() {
+    return connection;
 }
 
 bool Transport::parseAddress(const string& spec, string& ip, int& port) {

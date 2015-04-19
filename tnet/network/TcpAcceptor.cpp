@@ -39,14 +39,16 @@ void TcpAcceptor::handleReadEvent() {
     assert(serverSocket);
     ServerSocket *newSocket = serverSocket->accept();
     if (!newSocket) {
-        return ;
+        return;
     }
+    cout << "new connection happened" << endl;
     TcpConnection *connection = new TcpConnection();
     connection->setSocket(newSocket);
     connection->setServerAdapter(_serverAdapter);
     connection->setIsServer(true);
     assert(_ownTransport);
     _ownTransport->addIOComponent(connection);
+    newSocket->setIOComponent(connection);
     assert(_epollEvent);
     _epollEvent->addEvent(newSocket, true, true);
 }
