@@ -24,11 +24,10 @@ bool DefaultPacketStream::encode(Packet *packet,
     return true;
 }
 
-bool DefaultPacketStream::decode(util::DataBuffer *dataBuffer, 
-            Packet *packet)
-{
+Packet* DefaultPacketStream::decode(util::DataBuffer *dataBuffer) {
     assert(dataBuffer);
-    DefaultPacket *defaultPacket = dynamic_cast<DefaultPacket*>(packet);
+    
+    DefaultPacket *defaultPacket = new DefaultPacket();
     uint32_t bodyLen = dataBuffer->readUInt32();
     defaultPacket->setBodyLen(bodyLen);
     uint32_t sessionId = dataBuffer->readUInt32();
@@ -38,11 +37,11 @@ bool DefaultPacketStream::decode(util::DataBuffer *dataBuffer,
     void *packetBody = malloc(bodyLen);
     if (!dataBuffer->readBytes(packetBody, bodyLen)) {
         LOG(ERROR) << "read packet body error." << endl;
-        return false;
+        return NULL;
     }
     defaultPacket->setBody(packetBody);
-    packet = defaultPacket;
-    return true;
+    defaultPacket->setIsOwnBody(true);
+    return defaultPacket;
 }
 
 TNET_END_NAMESPACE(network);

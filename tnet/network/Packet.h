@@ -7,11 +7,19 @@ TNET_BEGIN_NAMESPACE(network);
 
 class PacketHeader {
 public:
+    static const uint32_t PACKET_HEADER_LEN = 12;
+public:
     PacketHeader()
         : _bodyLen(0)
         , _sessionId(0) 
         ,_type(0)
     {
+    }
+    PacketHeader(char *buf)
+    {
+        _bodyLen = *(uint32_t*)buf;
+        _sessionId = *(uint32_t*)(buf + 4);
+        _type = *(uint32_t*)(buf + 8);
     }
 public:
     uint32_t _bodyLen;

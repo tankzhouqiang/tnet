@@ -2,6 +2,7 @@
 #define TNET_SERVERADAPTER_H
 
 #include <tnet/common/Common.h>
+#include <tnet/network/Packet.h>
 
 TNET_BEGIN_NAMESPACE(network);
 
@@ -14,7 +15,7 @@ private:
     ServerAdapter(const ServerAdapter &);
     ServerAdapter& operator=(const ServerAdapter &);
 public:
-    
+    virtual void handlePacket(Packet *packet) = 0;
 private:
 };
 

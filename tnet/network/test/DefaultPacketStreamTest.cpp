@@ -28,17 +28,19 @@ TEST_F(DefaultPacketStreamTest, simpleProcess) {
     DefaultPacketStream defaultPacketStream;
     util::DataBuffer dataBuffer;
     ASSERT_TRUE(defaultPacketStream.encode(packet, &dataBuffer));
-    delete packet;
-    DefaultPacket decodePacket;
-    ASSERT_TRUE(defaultPacketStream.decode(&dataBuffer, &decodePacket));
-    ASSERT_EQ((uint32_t)1, decodePacket.getSessionId());
-    ASSERT_EQ((int32_t)2, decodePacket.getPacketType());
-    ASSERT_EQ((int32_t)9, decodePacket.getBodyLen());
-    char *decodeBuf = (char*) decodePacket.getBody();
+    Packet *packet2 = defaultPacketStream.decode(&dataBuffer);
+    ASSERT_TRUE(packet2);
+    DefaultPacket *decodePacket = dynamic_cast<DefaultPacket*> (packet2);
+    assert(decodePacket);
+    ASSERT_EQ((uint32_t)1, decodePacket->getSessionId());
+    ASSERT_EQ((int32_t)2, decodePacket->getPacketType());
+    ASSERT_EQ((int32_t)9, decodePacket->getBodyLen());
+    char *decodeBuf = (char*) decodePacket->getBody();
     for (uint32_t i = 0; i < 9; ++i) {
         ASSERT_EQ(buf[i], *(decodeBuf + i));
     }
-    free(decodeBuf);
+    delete packet;
+    delete packet2;
 }
 
 TNET_END_NAMESPACE(network);

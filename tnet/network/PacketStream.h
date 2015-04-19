@@ -17,7 +17,7 @@ private:
     PacketStream& operator=(const PacketStream &);
 public:
     virtual bool encode(Packet *packet, util::DataBuffer *dataBuffer) = 0;
-    virtual bool decode(util::DataBuffer *dataBuffer, Packet *packet) = 0;
+    virtual Packet* decode(util::DataBuffer *dataBuffer) = 0;
 private:
 };
 

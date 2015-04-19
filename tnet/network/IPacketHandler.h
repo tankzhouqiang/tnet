@@ -2,6 +2,7 @@
 #define TNET_IPACKETHANDLER_H
 
 #include <tnet/common/Common.h>
+#include <tnet/network/Packet.h>
 
 TNET_BEGIN_NAMESPACE(network);
 
@@ -14,7 +15,7 @@ private:
     IPacketHandler(const IPacketHandler &);
     IPacketHandler& operator=(const IPacketHandler &);
 public:
-
+    virtual void handlePacket(Packet *packet, void *args) = 0;
 private:
 };
 

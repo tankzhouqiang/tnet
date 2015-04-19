@@ -39,6 +39,8 @@ public:
     /*override*/ virtual void handleWriteEvent();
     /*override*/ virtual void handleErrorEvent() {assert(false);};
 private:
+    Packet* getOnePacket();
+private:
     bool _isServer;
     PacketStream *_packetStream;
     std::list<Packet*> _packetList;

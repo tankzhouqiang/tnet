@@ -22,7 +22,11 @@ public:
     void* getBody() const {
         return _body;
     }
+    void setIsOwnBody(bool isOwnBody = false) {
+        _isOwnBody = isOwnBody;
+    }
 private:
+    bool _isOwnBody;
     void *_body;
 };
 

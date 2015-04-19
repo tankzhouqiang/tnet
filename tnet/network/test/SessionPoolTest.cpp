@@ -18,13 +18,21 @@ protected:
     }
 };
 
+class SimpleIPacketHandler : public IPacketHandler
+{
+public:
+    virtual void handlePacket(Packet *packet, void *args) {
+        return;
+    }
+};
+
 TEST_F(SessionPoolTest, simple) {
     SessionPool pool;
-    IPacketHandler handler;
+    SimpleIPacketHandler handler;
     int32_t args = 1;
     ASSERT_EQ(uint32_t(0), pool.allocateSession(&handler, 
                     (void*)&args));
-    IPacketHandler handler2;
+    SimpleIPacketHandler handler2;
     int32_t args2 = 2;
     ASSERT_EQ(uint32_t(1), pool.allocateSession(&handler2, 
                     (void*)&args2));
