@@ -1,4 +1,6 @@
 #include <tnet/network/ServerSocket.h>
+#include <fcntl.h>
+
 using namespace std;
 TNET_BEGIN_NAMESPACE(network);
 
@@ -49,16 +51,23 @@ bool ServerSocket::listen() {
 }
 
 ServerSocket* ServerSocket::accept() {
-    struct sockaddr clientAddr;
+    struct sockaddr_in clientAddr;
     socklen_t len;
-    int connFd = ::accept(_socketFd, &clientAddr, &len);
+    int connFd = ::accept(_socketFd, (struct sockaddr*)&clientAddr, &len);
     if (connFd < 0) {
         LOG(ERROR) << "accept error" << endl;
         return NULL;
     }
-    
+    int val = fcntl(connFd, F_GETFL, 0);
+    fcntl(connFd, F_SETFL, val | O_NONBLOCK);
+
+    char buf[2048];
+    LOG(INFO) << "new connection from " << 
+        inet_ntop(AF_INET, &clientAddr.sin_addr, buf, sizeof(buf)) << endl;
+    LOG(INFO) << "port: " << clientAddr.sin_port << endl;
     ServerSocket *socket = new ServerSocket();
     socket->setSocketFd(connFd);
+    
     return socket;
 }
 

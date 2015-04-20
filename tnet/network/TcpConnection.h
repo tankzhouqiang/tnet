@@ -37,6 +37,9 @@ public:
     void setIPacketHandler(IPacketHandler *clientAdapter) {
         _clientAdapter = clientAdapter;
     }
+    void setServerPacketStream(PacketStream *packetStream) {
+        _packetStream = packetStream;
+    }
     /*override*/ virtual void handleReadEvent();
     /*override*/ virtual void handleWriteEvent();
     /*override*/ virtual void handleErrorEvent() {assert(false);};

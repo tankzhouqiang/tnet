@@ -27,7 +27,7 @@ bool TcpConnection::init(const string&ip, int port,
     _socket->setIOComponent(this);
     assert(packetStream);
     _packetStream = packetStream;
-    return _socket->init();
+    return true;
 }
 
 bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
@@ -60,23 +60,23 @@ Packet* TcpConnection::getOnePacket() {
         return NULL;
     }
     dataBuffer.pourData(PacketHeader::PACKET_HEADER_LEN);
-    uint32_t bodyLen = *(uint32_t*) dataBuffer.getData();
+    uint32_t bodyLen = dataBuffer.onlyReadUInt32();
+    cout << "bodyLen" << bodyLen << endl;
     dataBuffer.ensureFree(bodyLen);
+    cout << "bodyLen1111" << bodyLen << endl;
     if (_socket->readn((void*)dataBuffer.getFree(), bodyLen) 
         != bodyLen) 
     {
         return NULL;
     }
-    cout << "bodyLen" << bodyLen << endl;
-    for (uint32_t i = 0; i < bodyLen; ++i) {
-        cout << *((char*) dataBuffer.getData() + i) << endl;
-    }
-
+    dataBuffer.pourData(bodyLen);
+    cout << "bodyLen2222" << bodyLen << endl;
     Packet *packet = _packetStream->decode(&dataBuffer);
-    if (packet) {
+    if (!packet) {
         LOG(ERROR) << "decode packet error" << endl;
         return NULL;
     }
+    cout << "bodyLen333" << bodyLen << endl;
     return packet;
 }
 
@@ -85,6 +85,7 @@ void TcpConnection::handleReadEvent() {
         cout << "handleReadEvent in tcpconnection" << endl;
         Packet *packet = getOnePacket();
         if (!packet)  {
+            cout << "handleReadEvent packet empty." << endl;
             break;
         }
         if (_isServer) {
@@ -119,6 +120,7 @@ void TcpConnection::handleWriteEvent() {
         }
         int dataLen = dataBuffer.getDataLen();
         cout << "write data" << dataLen << endl;
+        cout << *(uint32_t*) dataBuffer.getData();
         if (_socket->writen(dataBuffer.getData(), dataLen) != dataLen)
         {
             LOG(ERROR) << "write data error" << endl;

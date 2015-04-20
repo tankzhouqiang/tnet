@@ -37,9 +37,10 @@ public:
         size_t nleft = n ;
         char *ptr = (char*)buf;
         size_t nread;
+        std::cout << "need read in socket" << n << std::endl;            
         while (nleft > 0) {
             if ((nread = read(_socketFd, ptr, nleft)) < 0) {
-                if (errno = EINTR) {
+                if (errno == EINTR) {
                     nread = 0;
                 } else {
                     return -1;
@@ -47,8 +48,12 @@ public:
             } else if (nread == 0) {
                 break;
             }
+            if (errno != 0) {
+                return -1;
+            } 
             nleft -= nread;
             ptr += nread;
+            std::cout << errno << " read in socket" << nread << std::endl;            
         }
         return (n - nleft);
     }

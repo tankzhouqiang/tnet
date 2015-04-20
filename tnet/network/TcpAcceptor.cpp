@@ -7,6 +7,7 @@ TcpAcceptor::TcpAcceptor()
     : _serverAdapter(NULL)
     , _ownTransport(NULL)
     , _epollEvent(NULL)
+    , _packetStream(NULL)
 {
 }
 
@@ -15,7 +16,8 @@ TcpAcceptor::~TcpAcceptor() {
 
 bool TcpAcceptor::init(const string& ip, int port, 
                        ServerAdapter *adapter, 
-                       EpollEvent *epollEvent) 
+                       EpollEvent *epollEvent,
+                       PacketStream *packetStream) 
 {
     _socket = new ServerSocket(ip, port);
     if (!_socket->init()) {
@@ -25,6 +27,7 @@ bool TcpAcceptor::init(const string& ip, int port,
     _socket->setIOComponent(this);
     _serverAdapter = adapter;
     _epollEvent = epollEvent;
+    _packetStream = packetStream;
     return true;
 }
 
@@ -45,6 +48,7 @@ void TcpAcceptor::handleReadEvent() {
     TcpConnection *connection = new TcpConnection();
     connection->setSocket(newSocket);
     connection->setServerAdapter(_serverAdapter);
+    connection->setServerPacketStream(_packetStream);
     connection->setIsServer(true);
     assert(_ownTransport);
     _ownTransport->addIOComponent(connection);

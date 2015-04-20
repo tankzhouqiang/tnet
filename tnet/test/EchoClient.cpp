@@ -56,15 +56,16 @@ int main(int argc, char** argv) {
     }
     TcpConnection *connection = transport.connect(spec, &packetStream);
     assert(connection);
-    uint32_t count = 100000;
+    uint32_t count = 10;
     string str[count];
     for (uint32_t i = 0; i < count; i++) {
         str[i] = StringUtil::toString(i);
         DefaultPacket *packet = new DefaultPacket();
         packet->setBodyLen(str[i].length());
         packet->setBody((void*)str[i].data());
-        // connection->postPacket(packet, &packetHandler, 
-        //                        (void*)&str[i]);
+        connection->postPacket(packet, &packetHandler, 
+                               (void*)&str[i]);
+        sleep(10);
     }
     transport.wait();
 }

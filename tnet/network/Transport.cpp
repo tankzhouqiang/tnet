@@ -36,7 +36,9 @@ bool Transport::init(const string& spec, PacketStream *packetStream,
     }
     
     TcpAcceptor *tcpAcceptor = new TcpAcceptor();
-    if (!tcpAcceptor->init(ip, port, adapter, _epollEvent)) {
+    if (!tcpAcceptor->init(ip, port, adapter, 
+                           _epollEvent, packetStream)) 
+    {
         return false;
     }
     tcpAcceptor->setTransport(this);

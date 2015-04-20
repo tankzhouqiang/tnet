@@ -278,6 +278,17 @@ public:
         return n;
     }
 
+    uint32_t onlyReadUInt32() {
+        uint32_t n = _pdata[0];
+        n <<= 8;
+        n |= _pdata[1];
+        n <<= 8;
+        n |= _pdata[2];
+        n <<= 8;
+        n |= _pdata[3];
+        return n;
+    }
+
     uint64_t readUInt64() {
         uint64_t n = _pdata[0];
         n <<= 8;

@@ -23,6 +23,18 @@ bool ClientSocket::init() {
     serverAddr.sin_port = htons(static_cast<short>(_serverPort));
     int ret = ::connect(_socketFd, (const struct sockaddr*) &serverAddr, 
                          sizeof(serverAddr));
+    
+    struct sockaddr_in clientAddr;
+    if (getsockname(_socketFd, (struct sockaddr *) &clientAddr, 
+                    NULL) == 0)
+    {
+        char buf[2048];
+        LOG(INFO) << "new connection ip " << 
+            inet_ntop(AF_INET, &clientAddr.sin_addr, buf, sizeof(buf)) << endl;
+        LOG(INFO) << "port: " << clientAddr.sin_port << endl;
+    } else {
+        LOG(INFO) << "error port: " << clientAddr.sin_port << endl;
+    }
     return ret == 0;
 }
 

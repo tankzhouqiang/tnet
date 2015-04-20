@@ -19,7 +19,9 @@ private:
     TcpAcceptor(const TcpAcceptor &);
     TcpAcceptor& operator=(const TcpAcceptor &);
 public:
-    bool init(const std::string& ip, int port, ServerAdapter *adapter, EpollEvent *epollEvent);
+    bool init(const std::string& ip, int port, 
+              ServerAdapter *adapter, EpollEvent *epollEvent, 
+              PacketStream *packetStream);
     void setTransport(Transport *transport);
     /*override*/ virtual void handleReadEvent();
     /*override*/ virtual void handleWriteEvent() {assert(false);}
@@ -28,6 +30,7 @@ private:
     ServerAdapter *_serverAdapter;
     Transport *_ownTransport;
     EpollEvent *_epollEvent;
+    PacketStream *_packetStream;
 };
 
 TNET_TYPEDEF_PTR(TcpAcceptor);

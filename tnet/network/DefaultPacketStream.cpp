@@ -27,7 +27,7 @@ bool DefaultPacketStream::encode(Packet *packet,
 
 Packet* DefaultPacketStream::decode(util::DataBuffer *dataBuffer) {
     assert(dataBuffer);
-    
+    cout << "bodyLen decode"  << endl;
     DefaultPacket *defaultPacket = new DefaultPacket();
     uint32_t bodyLen = dataBuffer->readUInt32();
     defaultPacket->setBodyLen(bodyLen);
@@ -36,10 +36,12 @@ Packet* DefaultPacketStream::decode(util::DataBuffer *dataBuffer) {
     uint32_t packetType = dataBuffer->readUInt32();
     defaultPacket->setPacketType(packetType);
     void *packetBody = malloc(bodyLen);
+    cout << "bodyLen5555555" << bodyLen << endl;
     if (!dataBuffer->readBytes(packetBody, bodyLen)) {
         LOG(ERROR) << "read packet body error." << endl;
         return NULL;
     }
+    cout << "bodyLen666666666666" << bodyLen << endl;
     defaultPacket->setBody(packetBody);
     defaultPacket->setIsOwnBody(true);
     return defaultPacket;
