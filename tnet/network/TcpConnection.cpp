@@ -100,8 +100,8 @@ void TcpConnection::handleReadEvent() {
             cout << "client recvie sessionId" << sessionId << endl;
             IPacketHandler *_handler = session->_handler;
             _handler->handlePacket(packet, session->_args);
+            delete packet;
         }
-        delete packet;
     }
 }
 

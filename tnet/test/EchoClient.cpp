@@ -32,10 +32,11 @@ public:
         uint32_t bodyLen = defaultPacket->getBodyLen();
         if (memcmp(args, defaultPacket->getBody(), bodyLen) == 0) {
             LOG(ERROR) << "packet echo is not equal origin" << endl;
+            assert(false);
         }
         string echoString((char*)defaultPacket->getBody(), 
                           bodyLen);
-        cout << echoString << endl;
+        cout << "client receive " << echoString << endl;
     }
 private:
 };
@@ -65,7 +66,7 @@ int main(int argc, char** argv) {
         packet->setBody((void*)str[i].data());
         connection->postPacket(packet, &packetHandler, 
                                (void*)&str[i]);
-        sleep(10);
+        sleep(1);
     }
     transport.wait();
 }

@@ -22,8 +22,10 @@ bool ClientSocket::init() {
     serverAddr.sin_addr.s_addr = inet_addr(_serverIP.data());
     serverAddr.sin_port = htons(static_cast<short>(_serverPort));
     int ret = ::connect(_socketFd, (const struct sockaddr*) &serverAddr, 
-                         sizeof(serverAddr));
-    
+                        sizeof(serverAddr));
+    int val = fcntl(_socketFd, F_GETFL, 0);
+    fcntl(_socketFd, F_SETFL, val | O_NONBLOCK);
+
     struct sockaddr_in clientAddr;
     if (getsockname(_socketFd, (struct sockaddr *) &clientAddr, 
                     NULL) == 0)

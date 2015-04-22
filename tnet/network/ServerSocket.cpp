@@ -1,5 +1,4 @@
 #include <tnet/network/ServerSocket.h>
-#include <fcntl.h>
 
 using namespace std;
 TNET_BEGIN_NAMESPACE(network);
@@ -39,10 +38,13 @@ bool ServerSocket::bind(const struct sockaddr_in& serverAddr) {
         LOG(ERROR) << "bind error" << endl;
         return false;
     }
+    int val = fcntl(_socketFd, F_GETFL, 0);
+    fcntl(_socketFd, F_SETFL, val | O_NONBLOCK);
     return true;
 }
 
 bool ServerSocket::listen() {
+
     if (::listen(_socketFd, _backLog) < 0) {
         LOG(ERROR) << "listen error" << endl;
         return false;
