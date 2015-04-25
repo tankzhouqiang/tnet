@@ -22,7 +22,6 @@ public:
             TcpConnection *connection) {
         assert(packet);
         assert(connection);
-        cout << "server recive packet" << endl;
         connection->postPacket(packet);
     }
 };
@@ -30,7 +29,10 @@ public:
 TNET_TYPEDEF_PTR(EchoServerAdapter);
 
 int main(int argc, char** argv) {
-//    google::InitGoogleLogging(argv[0]);
+   google::InitGoogleLogging(argv[0]);
+   google::SetLogDestination(google::INFO, "INFO_");
+   google::SetLogDestination(google::WARNING, "WARNING_");
+   google::SetLogDestination(google::ERROR, "ERROR_");
     if (argc != 2) {
         LOG(ERROR) << "./echo_server ip:port";
         exit(-1);

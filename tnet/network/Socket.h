@@ -33,12 +33,11 @@ public:
         _socketFd = socketFd;
     }
     
-    ssize_t readn(void *buf, size_t n) {
+    int readn(void *buf, size_t n) {
 //        size_t nleft = n ;
         char *ptr = (char*)buf;
         size_t nread;
-        size_t res = -1;
-        std::cout << "need read in socket" << n << std::endl;            
+        int res = 0;
         do {
             res = ::read(_socketFd, ptr, n);
             if (res > 0)
@@ -47,25 +46,6 @@ public:
             }
         } while (-1 == res && errno == EINTR);
         return res;
-
-        // while (nleft > 0) {
-        //     if ((nread = read(_socketFd, ptr, nleft)) < 0) {
-        //         if (errno == EINTR) {
-        //             nread = 0;
-        //         } else {
-        //             return -1;
-        //         } 
-        //     } else if (nread == 0) {
-        //         break;
-        //     }
-        //     if (errno != 0) {
-        //         return -1;
-        //     } 
-        //     nleft -= nread;
-        //     ptr += nread;
-        //     std::cout << errno << " read in socket" << nread << std::endl;            
-        // }
-        // return (n - nleft);
     }
 
     ssize_t writen(void *buf, size_t n) {
@@ -87,6 +67,22 @@ public:
         }
         return n;
     }
+    
+    int getSoError() {
+        int lastError = errno;
+        int  soError = 0;
+        socklen_t soErrorLen = sizeof(soError);
+        if (getsockopt(_socketFd, SOL_SOCKET, SO_ERROR, 
+                       (void *)(&soError), &soErrorLen) != 0) 
+        {
+            return lastError;
+        }
+        if (soErrorLen != sizeof(soError))
+            return EINVAL;
+        
+        return soError;
+    }
+
 protected:
     bool socket();
 

@@ -7,7 +7,7 @@ TNET_BEGIN_NAMESPACE(network);
 
 class PacketHeader {
 public:
-    static const uint32_t PACKET_HEADER_LEN = 12;
+    static const int PACKET_HEADER_LEN = 12;
 public:
     PacketHeader()
         : _bodyLen(0)

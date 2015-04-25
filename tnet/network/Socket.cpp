@@ -10,6 +10,7 @@ Socket::Socket()
 }
 
 Socket::~Socket() { 
+    ::close(_socketFd);
 }
 
 bool Socket::socket() {

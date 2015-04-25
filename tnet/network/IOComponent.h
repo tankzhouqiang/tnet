@@ -16,9 +16,9 @@ private:
     IOComponent(const IOComponent &);
     IOComponent& operator=(const IOComponent &);
 public:
-    virtual void handleReadEvent() = 0;
-    virtual void handleWriteEvent() = 0;
-    virtual void handleErrorEvent() = 0;
+    virtual bool handleReadEvent() = 0;
+    virtual bool handleWriteEvent() = 0;
+    virtual bool handleErrorEvent() = 0;
 
     Socket* getSocket() const {
         return _socket;
@@ -28,8 +28,15 @@ public:
         assert(socket);
         _socket = socket;
     }
+    bool getClosed() const {
+        return _closed;
+    }
+    void setClosed(bool closed) {
+        _closed = closed;
+    }
 protected:
     Socket *_socket;
+    bool _closed;
 };
 
 TNET_TYPEDEF_PTR(IOComponent);

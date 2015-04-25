@@ -23,9 +23,9 @@ public:
               ServerAdapter *adapter, EpollEvent *epollEvent, 
               PacketStream *packetStream);
     void setTransport(Transport *transport);
-    /*override*/ virtual void handleReadEvent();
-    /*override*/ virtual void handleWriteEvent() {assert(false);}
-    /*override*/ virtual void handleErrorEvent() {assert(false);};
+    /*override*/ virtual bool handleReadEvent();
+    /*override*/ virtual bool handleWriteEvent() {assert(false);}
+    /*override*/ virtual bool handleErrorEvent() {assert(false);};
 private:
     ServerAdapter *_serverAdapter;
     Transport *_ownTransport;

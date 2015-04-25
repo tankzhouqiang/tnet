@@ -49,44 +49,46 @@ bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
     return true;
 }
 
-Packet* TcpConnection::getOnePacket() {
+Packet* TcpConnection::getOnePacket(bool &closed) {
     DataBuffer dataBuffer;
     dataBuffer.ensureFree(PacketHeader::PACKET_HEADER_LEN);
     
-    if (_socket->readn((void*)dataBuffer.getData(), 
-                       PacketHeader::PACKET_HEADER_LEN)
-        != PacketHeader::PACKET_HEADER_LEN) 
-    {
+    int readLen = _socket->readn((void*)dataBuffer.getData(), 
+                                    PacketHeader::PACKET_HEADER_LEN);
+    if (readLen == 0) {
+        closed = true;
+        return NULL;
+    }
+    if (readLen != PacketHeader::PACKET_HEADER_LEN) {
         return NULL;
     }
     dataBuffer.pourData(PacketHeader::PACKET_HEADER_LEN);
     uint32_t bodyLen = dataBuffer.onlyReadUInt32();
-    cout << "bodyLen" << bodyLen << endl;
     dataBuffer.ensureFree(bodyLen);
-    cout << "bodyLen1111" << bodyLen << endl;
     if (_socket->readn((void*)dataBuffer.getFree(), bodyLen) 
         != bodyLen) 
     {
         return NULL;
     }
     dataBuffer.pourData(bodyLen);
-    cout << "bodyLen2222" << bodyLen << endl;
     Packet *packet = _packetStream->decode(&dataBuffer);
     if (!packet) {
         LOG(ERROR) << "decode packet error" << endl;
         return NULL;
     }
-    cout << "bodyLen333" << bodyLen << endl;
     return packet;
 }
 
-void TcpConnection::handleReadEvent() {
+bool TcpConnection::handleReadEvent() {
     while (true) {
-        cout << "handleReadEvent in tcpconnection" << endl;
-        Packet *packet = getOnePacket();
+        bool closed = false;
+        Packet *packet = getOnePacket(closed);
         if (!packet)  {
-            cout << "handleReadEvent packet empty." << endl;
-            break;
+            if (closed) {
+                return false;
+            } else {
+                return true;
+            }
         }
         if (_isServer) {
             _serverAdapter->handlePacket(packet, this);
@@ -97,15 +99,15 @@ void TcpConnection::handleReadEvent() {
                 LOG(ERROR) << "session Id " << sessionId << "is not existed" << endl;
                 continue;
             }
-            cout << "client recvie sessionId" << sessionId << endl;
             IPacketHandler *_handler = session->_handler;
             _handler->handlePacket(packet, session->_args);
             delete packet;
         }
     }
+    return true;
 }
 
-void TcpConnection::handleWriteEvent() {
+bool TcpConnection::handleWriteEvent() {
     util::ScopedLock lock(_packetLock);
     for (list<Packet*>::iterator it = _packetList.begin(); 
          it != _packetList.end(); ++it) 
@@ -119,8 +121,6 @@ void TcpConnection::handleWriteEvent() {
             continue;
         }
         int dataLen = dataBuffer.getDataLen();
-        cout << "write data" << dataLen << endl;
-        cout << *(uint32_t*) dataBuffer.getData();
         if (_socket->writen(dataBuffer.getData(), dataLen) != dataLen)
         {
             LOG(ERROR) << "write data error" << endl;

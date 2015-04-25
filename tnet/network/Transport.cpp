@@ -69,8 +69,12 @@ bool Transport::ioLoop() {
                 continue;
             }
             if (ioEvents[i]._readOccurred == true) {
-                cout << "handleReadEvent" << endl;
-                ioComponent->handleReadEvent();
+                if (!ioComponent->handleReadEvent()) {
+                    Socket* socket = ioComponent->getSocket();
+                    if (_epollEvent->removeEvent(socket)) {
+                        ioComponent->setClosed(true);
+                    }
+                }
             }
             if (ioEvents[i]._writeOccurred == true) {
                 ioComponent->handleWriteEvent();

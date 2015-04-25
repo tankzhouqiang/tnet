@@ -40,11 +40,11 @@ public:
     void setServerPacketStream(PacketStream *packetStream) {
         _packetStream = packetStream;
     }
-    /*override*/ virtual void handleReadEvent();
-    /*override*/ virtual void handleWriteEvent();
-    /*override*/ virtual void handleErrorEvent() {assert(false);};
+    /*override*/ virtual bool handleReadEvent();
+    /*override*/ virtual bool handleWriteEvent();
+    /*override*/ virtual bool handleErrorEvent() {assert(false);};
 private:
-    Packet* getOnePacket();
+    Packet* getOnePacket(bool &closed);
 private:
     bool _isServer;
     PacketStream *_packetStream;

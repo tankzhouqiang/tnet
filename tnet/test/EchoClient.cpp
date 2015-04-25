@@ -30,19 +30,25 @@ public:
             dynamic_cast<DefaultPacket*>(packet);
         assert(defaultPacket);
         uint32_t bodyLen = defaultPacket->getBodyLen();
-        if (memcmp(args, defaultPacket->getBody(), bodyLen) == 0) {
-            LOG(ERROR) << "packet echo is not equal origin" << endl;
-            assert(false);
-        }
         string echoString((char*)defaultPacket->getBody(), 
                           bodyLen);
         cout << "client receive " << echoString << endl;
+        if (memcmp(args, defaultPacket->getBody(), bodyLen) != 0) {
+            string argsStr((char*)args, bodyLen);
+            LOG(ERROR) << "packet echo " <<  
+                echoString << "is not equal origin" << argsStr << "end" << endl;
+            assert(false);
+        }
     }
 private:
 };
 
 int main(int argc, char** argv) {
-//    google::InitGoogleLogging(argv[0]);
+   google::InitGoogleLogging(argv[0]);
+   google::SetStderrLogging(google::INFO);
+   google::SetLogDestination(google::INFO, "INFO_");
+   google::SetLogDestination(google::WARNING, "WARNING_");
+   google::SetLogDestination(google::ERROR, "ERROR_");
     if (argc != 2) {
         LOG(ERROR) << "./echo_client server_ip:server_port";
         exit(-1);
@@ -65,7 +71,7 @@ int main(int argc, char** argv) {
         packet->setBodyLen(str[i].length());
         packet->setBody((void*)str[i].data());
         connection->postPacket(packet, &packetHandler, 
-                               (void*)&str[i]);
+                               (void*)str[i].data());
         sleep(1);
     }
     transport.wait();

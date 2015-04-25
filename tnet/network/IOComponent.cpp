@@ -4,6 +4,7 @@ TNET_BEGIN_NAMESPACE(network);
 
 IOComponent::IOComponent() 
     : _socket(NULL)
+    , _closed(false)
 { 
 }
 

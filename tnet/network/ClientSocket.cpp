@@ -9,7 +9,7 @@ ClientSocket::ClientSocket(const string& serverIp, int serverPort)
 { 
 }
 
-ClientSocket::~ClientSocket() { 
+ClientSocket::~ClientSocket() {
 }
 
 bool ClientSocket::init() {

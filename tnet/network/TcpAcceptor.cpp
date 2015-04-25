@@ -35,16 +35,15 @@ void TcpAcceptor::setTransport(Transport *transport) {
     _ownTransport = transport;
 }
 
-void TcpAcceptor::handleReadEvent() {
+bool TcpAcceptor::handleReadEvent() {
     LOG(INFO) << "new connection." << endl;
     assert(_socket);
     ServerSocket *serverSocket = dynamic_cast<ServerSocket*> (_socket);
     assert(serverSocket);
     ServerSocket *newSocket = serverSocket->accept();
     if (!newSocket) {
-        return;
+        return true;
     }
-    cout << "new connection happened" << endl;
     TcpConnection *connection = new TcpConnection();
     connection->setSocket(newSocket);
     connection->setServerAdapter(_serverAdapter);
