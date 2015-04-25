@@ -33,5 +33,32 @@ vector<string> StringUtil::split(const string& text, const string &sep,
     return vec;
 }
 
+bool StringUtil::strToUInt32(const char* str, uint32_t& value) 
+{
+    if (NULL == str || *str == 0 || *str == '-') 
+    {
+        return false;
+    }
+    char* endPtr = NULL;
+    errno = 0;
+
+# if __WORDSIZE == 64
+    uint64_t value64 = strtoul(str, &endPtr, 10);
+    if (value64 > UINT32_MAX)
+    {
+        return false;
+    }
+    value = (int32_t)value64;
+# else
+    value = (uint32_t)strtoul(str, &endPtr, 10);
+# endif
+
+    if (errno == 0 && endPtr && *endPtr == 0) 
+    {
+        return true;
+    }
+    return false;
+}
+
 TNET_END_NAMESPACE(util);
 

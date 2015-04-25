@@ -16,6 +16,7 @@ public:
             const std::string &sep, bool ignoreEmpty = true);
     template<typename T>
     static std::string toString(const T &x);
+    static bool strToUInt32(const char* str, uint32_t& value);
 private:
     StringUtil(const StringUtil &);
     StringUtil& operator=(const StringUtil &);

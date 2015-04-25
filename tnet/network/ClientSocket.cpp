@@ -23,8 +23,6 @@ bool ClientSocket::init() {
     serverAddr.sin_port = htons(static_cast<short>(_serverPort));
     int ret = ::connect(_socketFd, (const struct sockaddr*) &serverAddr, 
                         sizeof(serverAddr));
-    int val = fcntl(_socketFd, F_GETFL, 0);
-    fcntl(_socketFd, F_SETFL, val | O_NONBLOCK);
 
     struct sockaddr_in clientAddr;
     if (getsockname(_socketFd, (struct sockaddr *) &clientAddr, 
@@ -37,6 +35,8 @@ bool ClientSocket::init() {
     } else {
         LOG(INFO) << "error port: " << clientAddr.sin_port << endl;
     }
+    int val = fcntl(_socketFd, F_GETFL, 0);
+    fcntl(_socketFd, F_SETFL, val | O_NONBLOCK);
     return ret == 0;
 }
 
