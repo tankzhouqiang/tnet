@@ -34,38 +34,40 @@ public:
     }
     
     int readn(void *buf, size_t n) {
-//        size_t nleft = n ;
-        char *ptr = (char*)buf;
-        size_t nread;
-        int res = 0;
-        do {
-            res = ::read(_socketFd, ptr, n);
-            if (res > 0)
-            {
-                return res;
+        size_t nleft = n; 
+        char *ptr = (char*)buf; 
+        ssize_t nread;
+        while (nleft > 0) {
+            if ((nread = read(_socketFd, ptr, nleft)) <= 0) {
+                if (errno == EINTR) { 
+                    nread = 0;
+                } else {
+                    return nread;
+                }
             }
-        } while (-1 == res && errno == EINTR);
-        return res;
+            nleft -= nread; 
+            ptr += nread;
+        }
+        return (n - nleft);    
     }
 
     ssize_t writen(void *buf, size_t n) {
         size_t nleft = n ;
         char *ptr = (char*)buf;
-        size_t nwrite;
+        ssize_t nwrite = 0;
         while (nleft > 0) {
-            if ((nwrite = write(_socketFd, ptr, nleft)) <= 0) {
-                if (nwrite < 0 && errno == EINTR) {
+            nwrite = 0;
+            if ((nwrite = write(_socketFd, ptr, nleft)) <= 0) {                                                                            
+                if (nwrite < 0 && (errno == EINTR || errno == EAGAIN)) {
                     nwrite = 0;
                 } else {
-                    return -1;
-                } 
-            } else if (nwrite == 0) {
-                break;
+                    return -1; 
+                }
             }
             nleft -= nwrite;
             ptr += nwrite;
         }
-        return n;
+        return (n);
     }
     
     int getSoError() {
@@ -83,6 +85,7 @@ public:
         return soError;
     }
 
+    bool setIntOption (int option, int value);
 protected:
     bool socket();
 

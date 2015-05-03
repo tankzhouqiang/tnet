@@ -27,7 +27,21 @@ bool Socket::socket() {
         LOG(ERROR) << "set SO_REUSEADDR" << endl;
         return false;
     }
+
+    if (!setIntOption(SO_SNDBUF, 640000)) {                                     
+        return false;                                                           
+    }                                                                           
+    if (!setIntOption(SO_RCVBUF, 640000)) {                                     
+        return false;                                                           
+    }                                                                           
     return true;
+}
+
+bool Socket::setIntOption (int option, int value) {
+    bool rc = false;
+    rc = setsockopt(_socketFd, SOL_SOCKET, option,
+                    (const void *)(&value), sizeof(value)) == 0;
+    return rc;
 }
 
 TNET_END_NAMESPACE(network);
