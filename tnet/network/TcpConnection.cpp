@@ -108,6 +108,7 @@ bool TcpConnection::handleReadEvent() {
 }
 
 bool TcpConnection::handleWriteEvent() {
+    uint32_t count = 0;
     util::ScopedLock lock(_packetLock);
     for (list<Packet*>::iterator it = _packetList.begin(); 
          it != _packetList.end(); ++it) 
@@ -126,8 +127,13 @@ bool TcpConnection::handleWriteEvent() {
             LOG(ERROR) << "write data error" << endl;
         }
         delete packet;
+        if (++count >= ONE_SEND_PACKET_COUNT) {
+            break;
+        }
     }
-    _packetList.clear();
+    for (uint32_t i = 0; i < count; ++i) {
+        _packetList.pop_front();
+    }
 }
 
 TNET_END_NAMESPACE(network);

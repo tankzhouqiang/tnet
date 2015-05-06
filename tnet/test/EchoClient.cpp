@@ -49,6 +49,7 @@ void runSendMsgThread(TcpConnection *connection, uint32_t msgCount, string str[]
         DefaultPacket *packet = new DefaultPacket();
         packet->setBodyLen(str[i].length());
         packet->setBody((void*)str[i].data());
+        std::cout << "send msg:" << str[i] << std::endl;
         connection->postPacket(packet, &packetHandler, (void*)str[i].data());
     }
 }
@@ -90,9 +91,8 @@ int main(int argc, char** argv) {
     for (uint32_t i = 0; i < threadCount; ++i) {
         TcpConnection *connection = transport.connect(spec, &packetStream);
         assert(connection);
-        cout << "new connection" << endl;
-         threadPtr[i] = Thread::createThread(tr1::bind(&runSendMsgThread, 
-                         connection, msgCount, str));
+        threadPtr[i] = Thread::createThread(tr1::bind(&runSendMsgThread, 
+                        connection, msgCount, str));
         assert(threadPtr);
     }
     transport.wait();

@@ -16,6 +16,7 @@ class TcpConnection : public IOComponent
 {
 public:
     const static uint32_t PACKET_LEN_SIZE = 0;
+    const static uint32_t ONE_SEND_PACKET_COUNT = 100;
 public:
     TcpConnection();
     ~TcpConnection();
