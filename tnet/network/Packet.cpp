@@ -1,5 +1,4 @@
 #include <tnet/network/Packet.h>
-#include <tnet/util/TimeUtility.h>
 
 TNET_USE_NAMESPACE(util);
 TNET_BEGIN_NAMESPACE(network);

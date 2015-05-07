@@ -49,6 +49,11 @@ public:
     virtual bool checkTimeout();
 private:
     Packet* getOnePacket(bool &closed);
+//for test
+public:
+    std::list<Packet*>& getPacketList() {
+        return _packetList;
+    }
 private:
     bool _isServer;
     PacketStream *_packetStream;

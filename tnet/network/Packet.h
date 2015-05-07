@@ -2,6 +2,7 @@
 #define TNET_PACKET_H
 
 #include <tnet/common/Common.h>
+#include <tnet/util/TimeUtility.h>
 
 TNET_BEGIN_NAMESPACE(network);
 
@@ -55,11 +56,18 @@ public:
     int getBodyLen() const {
         return _header._bodyLen;
     }
+    void setSendTime(int64_t sendTime) {
+        _sendTime = sendTime;
+    }
     void setTimeout(int64_t timeout) {
         _timeout = timeout;
     }
     int64_t getTimeout() const {
         return _timeout;
+    }
+    bool isTimeout() {
+        int64_t currentTime = util::TimeUtility::currentTime();
+        return  currentTime - _sendTime > _timeout;
     }
 private:
     PacketHeader _header;

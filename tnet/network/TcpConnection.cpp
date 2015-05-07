@@ -140,7 +140,16 @@ bool TcpConnection::handleWriteEvent() {
 }
 
 bool TcpConnection::checkTimeout() {
-    
+    util::ScopedLock lock(_packetLock);
+    for (list<Packet*>::iterator it = _packetList.begin(); 
+         it != _packetList.end();) 
+    {
+        if ((*it)->isTimeout()) {
+            _packetList.erase(it++);
+        } else {
+            it++;
+        }
+    }
 }
 
 TNET_END_NAMESPACE(network);
