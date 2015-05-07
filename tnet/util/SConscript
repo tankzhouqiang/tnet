@@ -6,6 +6,7 @@ libutil_sources = [
     'StringUtil.cpp',
     'Thread.cpp',
     'MemPool.cpp',
+    'TimeUtility.cpp',
     ]
 
 env.SharedLibrary(target = 'tnet_util',

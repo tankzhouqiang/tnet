@@ -10,6 +10,7 @@ TcpConnection::TcpConnection()
     , _packetStream(NULL)
     , _serverAdapter(NULL)
     , _clientAdapter(NULL)
+    , _timeout(DEFAULT_TIMEOUT)
 { 
 }
 
@@ -17,7 +18,7 @@ TcpConnection::~TcpConnection() {
 }
 
 bool TcpConnection::init(const string&ip, int port, 
-                         PacketStream *packetStream) 
+                         PacketStream *packetStream, int64_t timeout) 
 {
     _socket = new ClientSocket(ip, port);
     if (!_socket->init()) {
@@ -27,6 +28,7 @@ bool TcpConnection::init(const string&ip, int port,
     _socket->setIOComponent(this);
     assert(packetStream);
     _packetStream = packetStream;
+    _timeout = timeout;
     return true;
 }
 
@@ -41,6 +43,7 @@ bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
         uint32_t sessionId = _sessionPool.allocateSession(
                 packetHandler, args);
         packet->setSessionId(sessionId);
+        packet->setTimeout(_timeout);
     }
     {
         util::ScopedLock lock(_packetLock);
@@ -134,6 +137,10 @@ bool TcpConnection::handleWriteEvent() {
     for (uint32_t i = 0; i < count; ++i) {
         _packetList.pop_front();
     }
+}
+
+bool TcpConnection::checkTimeout() {
+    
 }
 
 TNET_END_NAMESPACE(network);

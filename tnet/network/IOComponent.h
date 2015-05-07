@@ -19,7 +19,9 @@ public:
     virtual bool handleReadEvent() = 0;
     virtual bool handleWriteEvent() = 0;
     virtual bool handleErrorEvent() = 0;
-
+    virtual bool checkTimeout() {
+        return true;
+    }
     Socket* getSocket() const {
         return _socket;
     }

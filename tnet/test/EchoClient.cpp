@@ -49,7 +49,7 @@ void runSendMsgThread(TcpConnection *connection, uint32_t msgCount, string str[]
         DefaultPacket *packet = new DefaultPacket();
         packet->setBodyLen(str[i].length());
         packet->setBody((void*)str[i].data());
-        std::cout << "send msg:" << str[i] << std::endl;
+        // std::cout << "send msg:" << str[i] << std::endl;
         connection->postPacket(packet, &packetHandler, (void*)str[i].data());
     }
 }

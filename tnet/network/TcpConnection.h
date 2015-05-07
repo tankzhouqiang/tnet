@@ -16,7 +16,7 @@ class TcpConnection : public IOComponent
 {
 public:
     const static uint32_t PACKET_LEN_SIZE = 0;
-    const static uint32_t ONE_SEND_PACKET_COUNT = 100;
+    const static uint32_t ONE_SEND_PACKET_COUNT = 10000;
 public:
     TcpConnection();
     ~TcpConnection();
@@ -25,7 +25,7 @@ private:
     TcpConnection& operator=(const TcpConnection &);
 public:
     bool init(const std::string&ip, int port, 
-              PacketStream *packetStream);
+              PacketStream *packetStream, int64_t timeout);
     bool postPacket(Packet *packet, 
                     IPacketHandler *packetHandler = NULL, 
                     void *args = NULL);
@@ -43,7 +43,10 @@ public:
     }
     /*override*/ virtual bool handleReadEvent();
     /*override*/ virtual bool handleWriteEvent();
-    /*override*/ virtual bool handleErrorEvent() {assert(false);};
+    /*override*/ virtual bool handleErrorEvent() {
+        return true;
+    };
+    virtual bool checkTimeout();
 private:
     Packet* getOnePacket(bool &closed);
 private:
@@ -54,6 +57,7 @@ private:
     ServerAdapter *_serverAdapter;
     IPacketHandler *_clientAdapter;
     SessionPool _sessionPool;
+    int64_t _timeout;
 };
 
 TNET_TYPEDEF_PTR(TcpConnection);

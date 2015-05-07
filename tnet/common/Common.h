@@ -11,6 +11,8 @@
 #include <map>
 #include <fcntl.h>
 
+const static int64_t DEFAULT_TIMEOUT = 5 * 1000 * 1000; //5s
+
 #define DELETE_AND_SET_NULL(object)  if (object) { delete object; object = NULL;}
 
 //#define TNET_BEGIN_NAMESPACE(x) namespace Tnet { namespace x {

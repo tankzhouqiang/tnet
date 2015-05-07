@@ -36,8 +36,9 @@ public:
 
     //client interface
     //spec format IP:PORT
-    TcpConnection* connect(const std::string& spec, 
-                           PacketStream *packetStream);
+    TcpConnection* connect(const std::string& spec,
+                           PacketStream *packetStream, 
+                           int64_t timeout = DEFAULT_TIMEOUT);
 
     void stop();
 
@@ -50,6 +51,7 @@ public:
     }
 private:
     bool ioLoop();
+    bool timeoutLoop();
 public:
     //public for test
     bool parseAddress(const std::string& spec, std::string& ip, int& port);
@@ -58,7 +60,7 @@ private:
     util::ThreadMutex _ioComponentVecLock;
     EpollEvent *_epollEvent;
     util::ThreadPtr _ioThreadPtr;
-    util::ThreadPtr _checkTimeoutThreadPtr;
+    util::ThreadPtr _timeoutThreadPtr;
     bool _start;
 };
 

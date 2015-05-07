@@ -25,7 +25,9 @@ public:
     void setTransport(Transport *transport);
     /*override*/ virtual bool handleReadEvent();
     /*override*/ virtual bool handleWriteEvent() {assert(false);}
-    /*override*/ virtual bool handleErrorEvent() {assert(false);};
+    /*override*/ virtual bool handleErrorEvent() {
+        return true;
+    };
 private:
     ServerAdapter *_serverAdapter;
     Transport *_ownTransport;

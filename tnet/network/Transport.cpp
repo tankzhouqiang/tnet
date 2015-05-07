@@ -81,7 +81,19 @@ bool Transport::ioLoop() {
             }
             if (ioEvents[i]._errorOccurred == true) {
                 ioComponent->handleErrorEvent();
+                Socket* socket = ioComponent->getSocket();
+                if (_epollEvent->removeEvent(socket)) {
+                    ioComponent->setClosed(true);
+                }
             }
+        }
+    }
+}
+
+bool Transport::timeoutLoop() {
+    while (_start) {
+        for (uint32_t i = 0; i < _ioComponentVec.size(); ++i) {
+            _ioComponentVec[i]->checkTimeout();
         }
     }
 }
@@ -95,6 +107,13 @@ bool Transport::start() {
         LOG(ERROR) << "start io thread error" << endl;
         return false;
     }
+    _timeoutThreadPtr = Thread::createThread(
+            tr1::bind(&Transport::timeoutLoop, this));
+    if (!_timeoutThreadPtr) {
+        LOG(ERROR) << "start io thread error" << endl;
+        return false;
+    }
+
     return true;
 }
 
@@ -109,7 +128,8 @@ void Transport::stop() {
 }
 
 TcpConnection* Transport::connect(const string& spec, 
-                                  PacketStream *packetStream)
+                                  PacketStream *packetStream,
+                                  int64_t timeout)
 {
     string ip;
     int port;
@@ -117,7 +137,7 @@ TcpConnection* Transport::connect(const string& spec,
         return NULL;
     }
     TcpConnection *connection = new TcpConnection();
-    if (!connection->init(ip, port, packetStream)) {
+    if (!connection->init(ip, port, packetStream, timeout)) {
         LOG(ERROR) << "tcp connection error";
         return NULL;
     }
