@@ -115,11 +115,18 @@ bool TcpConnection::handleWriteEvent() {
     list<Packet*> sendPacketList;
     {
         util::ScopedLock lock(_packetLock);
+        uint32_t count = 0;
         for (list<Packet*>::iterator it = _packetList.begin(); 
              it != _packetList.end(); ++it)
         {
             Packet *packet = *it;
             sendPacketList.push_back(packet);
+            if (++count > ONE_SEND_PACKET_COUNT) {
+                break;
+            }
+        }
+        for (uint32_t i = 0; i < count; ++i) {
+            _packetList.pop_front();
         }
     }
     

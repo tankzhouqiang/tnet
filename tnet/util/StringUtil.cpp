@@ -1,4 +1,5 @@
 #include <tnet/util/StringUtil.h>
+#include <limits>
 
 using namespace std;
 
@@ -44,7 +45,7 @@ bool StringUtil::strToUInt32(const char* str, uint32_t& value)
 
 # if __WORDSIZE == 64
     uint64_t value64 = strtoul(str, &endPtr, 10);
-    if (value64 > UINT32_MAX)
+    if (value64 > std::numeric_limits<uint32_t>::max())
     {
         return false;
     }
