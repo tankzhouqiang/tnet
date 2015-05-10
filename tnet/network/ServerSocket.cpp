@@ -22,10 +22,10 @@ bool ServerSocket::init() {
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = inet_addr(_ip.data());
     serverAddr.sin_port = htons(static_cast<short>(_port));
-    if (bind(serverAddr) < 0) {
+    if (!bind(serverAddr)) {
         return false;
     }
-    if (listen() < 0) {
+    if (!listen()) {
         return false;
     }
     return true;

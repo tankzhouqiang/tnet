@@ -18,6 +18,7 @@ Transport::Transport()
 
 Transport::~Transport() { 
     DELETE_AND_SET_NULL(_epollEvent);
+    ScopedLock lock(_ioComponentVecLock);
     std::vector<IOComponent*>::iterator it = _ioComponentVec.begin();
     for (; it != _ioComponentVec.end(); ++it) {
         delete *it;
@@ -92,9 +93,13 @@ bool Transport::ioLoop() {
 
 bool Transport::timeoutLoop() {
     while (_start) {
-        for (uint32_t i = 0; i < _ioComponentVec.size(); ++i) {
-            _ioComponentVec[i]->checkTimeout();
+        {
+            ScopedLock lock(_ioComponentVecLock);
+            for (uint32_t i = 0; i < _ioComponentVec.size(); ++i) {
+                _ioComponentVec[i]->checkTimeout();
+            }
         }
+        usleep(5000);
     }
 }
 
