@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     }
     ThreadPtr threadPtr[threadCount];
     for (uint32_t i = 0; i < threadCount; ++i) {
-        TcpConnection *connection = transport.connect(spec, &packetStream);
+        TcpConnection *connection = transport.connect(spec, &packetStream, -1);
         assert(connection);
         threadPtr[i] = Thread::createThread(tr1::bind(&runSendMsgThread, 
                         connection, msgCount, str));
