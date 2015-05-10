@@ -99,7 +99,7 @@ bool Transport::timeoutLoop() {
                 _ioComponentVec[i]->checkTimeout();
             }
         }
-        usleep(5000);
+        usleep(500000);
     }
 }
 
