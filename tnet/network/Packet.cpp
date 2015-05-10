@@ -5,7 +5,6 @@ TNET_BEGIN_NAMESPACE(network);
 
 Packet::Packet() 
     : _sendTime(TimeUtility::currentTime())
-    , _timeout(DEFAULT_TIMEOUT)
 { 
 }
 

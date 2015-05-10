@@ -16,8 +16,13 @@ private:
     SessionPool(const SessionPool &);
     SessionPool& operator=(const SessionPool &);
 public:
-    uint32_t allocateSession(IPacketHandler *handler, void *args);
+    uint32_t allocateSession(IPacketHandler *handler, void *args,
+                             Packet *packet, int64_t timeout);
     Session* getSession(uint32_t sessionId);
+    void checkTimeout();
+public:
+//for test;
+    Session* testSession(uint32_t sessionId);
 private:
     uint32_t _sessionId;
     std::map<uint32_t, Session*> _sessionPool;

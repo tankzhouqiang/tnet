@@ -41,9 +41,8 @@ bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
     }
     if (!_isServer) {
         uint32_t sessionId = _sessionPool.allocateSession(
-                packetHandler, args);
+                packetHandler, args, packet, _timeout);
         packet->setSessionId(sessionId);
-        packet->setTimeout(_timeout);
     }
     {
         util::ScopedLock lock(_packetLock);
@@ -102,8 +101,8 @@ bool TcpConnection::handleReadEvent() {
                 LOG(ERROR) << "session Id " << sessionId << "is not existed" << endl;
                 continue;
             }
-            IPacketHandler *_handler = session->_handler;
-            _handler->handlePacket(packet, session->_args);
+            IPacketHandler *handler = session->_handler;
+            handler->handlePacket(packet, session->_args);
             delete packet;
         }
     }
@@ -154,16 +153,7 @@ bool TcpConnection::handleWriteEvent() {
 }
 
 bool TcpConnection::checkTimeout() {
-    util::ScopedLock lock(_packetLock);
-    for (list<Packet*>::iterator it = _packetList.begin(); 
-         it != _packetList.end();) 
-    {
-        if ((*it)->isTimeout()) {
-            _packetList.erase(it++);
-        } else {
-            it++;
-        }
-    }
+    _sessionPool.checkTimeout();
 }
 
 TNET_END_NAMESPACE(network);

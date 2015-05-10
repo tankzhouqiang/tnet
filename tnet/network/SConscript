@@ -20,6 +20,7 @@ libnetwork_sources = [
     'SessionPool.cpp',
     'Session.cpp',
     'DefaultPacketStream.cpp',
+    'TimeoutPacket.cpp',
     ]
 
 env.SharedLibrary(target = 'tnet_network',

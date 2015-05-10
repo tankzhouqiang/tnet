@@ -7,7 +7,6 @@ libnetwork_sources = [
     'TransportTest.cpp',
     'SessionPoolTest.cpp',
     'DefaultPacketStreamTest.cpp',
-    'TcpConnectionTest.cpp',
     ]
 
 env.Program('tnet_network_test',

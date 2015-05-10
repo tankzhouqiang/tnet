@@ -59,20 +59,13 @@ public:
     void setSendTime(int64_t sendTime) {
         _sendTime = sendTime;
     }
-    void setTimeout(int64_t timeout) {
-        _timeout = timeout;
+    int64_t getSendTime() const {
+        return _sendTime;
     }
-    int64_t getTimeout() const {
-        return _timeout;
-    }
-    bool isTimeout() {
-        int64_t currentTime = util::TimeUtility::currentTime();
-        return  currentTime - _sendTime > _timeout;
-    }
+
 private:
     PacketHeader _header;
     int64_t _sendTime;
-    int64_t _timeout;
 };
 
 TNET_TYPEDEF_PTR(Packet);
