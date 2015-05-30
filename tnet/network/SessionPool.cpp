@@ -11,6 +11,14 @@ SessionPool::SessionPool()
 }
 
 SessionPool::~SessionPool() { 
+    ScopedLock lock(_sessionMutex);
+    for (std::map<uint32_t, Session*>::iterator it = 
+             _sessionPool.begin(); it != _sessionPool.end();)
+    {
+        Session *session = it->second;
+        delete session;
+    }
+    _sessionPool.clear();
 }
 
 uint32_t SessionPool::allocateSession(IPacketHandler *handler, 

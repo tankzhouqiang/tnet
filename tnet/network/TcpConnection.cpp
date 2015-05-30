@@ -104,6 +104,7 @@ bool TcpConnection::handleReadEvent() {
             IPacketHandler *handler = session->_handler;
             handler->handlePacket(packet, session->_args);
             delete packet;
+            delete session;
         }
     }
     return true;
