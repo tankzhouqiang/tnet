@@ -30,7 +30,7 @@ public:
         uint32_t bodyLen = defaultPacket->getBodyLen();
         string echoString((char*)defaultPacket->getBody(), 
                           bodyLen);
-        LOG(INFO) << "client receive " << echoString << endl;
+	LOG(INFO) << "client receive " << echoString << endl;
         if (memcmp(args, defaultPacket->getBody(), bodyLen) != 0) {
             string argsStr((char*)args, bodyLen);
             LOG(ERROR) << "packet echo " <<  
@@ -43,14 +43,17 @@ private:
 
 EchoPacketHandler packetHandler;
 
-void runSendMsgThread(TcpConnection *connection, uint32_t msgCount, string str[]) {
+void runSendMsgThread(TcpConnection *connection, uint32_t msgCount, 
+		      uint32_t msgLength, string str) 
+{
     assert(connection);
+    cout << "msgLength: " << str.length() << endl;
+    cout << "send msg: " << str << endl;
     for (uint32_t i = 0; i < msgCount; i++) {
         DefaultPacket *packet = new DefaultPacket();
-        packet->setBodyLen(str[i].length());
-        packet->setBody((void*)str[i].data());
-        // std::cout << "send msg:" << str[i] << std::endl;
-        connection->postPacket(packet, &packetHandler, (void*)str[i].data());
+        packet->setBodyLen(str.length());
+        packet->setBody((void*)str.data());
+        connection->postPacket(packet, &packetHandler, (void*)str.data());
     }
 }
 
@@ -61,8 +64,8 @@ int main(int argc, char** argv) {
    google::SetLogDestination(google::INFO, "INFO_");
    google::SetLogDestination(google::WARNING, "WARNING_");
    google::SetLogDestination(google::ERROR, "ERROR_");
-    if (argc != 4) {
-        LOG(ERROR) << "./echo_client server_ip:server_port thread_count msg_count";
+    if (argc != 5) {
+        LOG(ERROR) << "./echo_client server_ip:server_port thread_count msg_count msg_length";
         exit(-1);
     }
     string spec = argv[1];
@@ -75,6 +78,7 @@ int main(int argc, char** argv) {
     
     uint32_t threadCount = 0;
     uint32_t msgCount = 0;
+    uint32_t msgLength = 0;
     if (!StringUtil::strToUInt32(argv[2], threadCount)) {
         LOG(ERROR) << "thread count error: " << argv[2] << endl;
         return false;
@@ -83,16 +87,20 @@ int main(int argc, char** argv) {
         LOG(ERROR) << "msg count error: " << argv[3] << endl;
         return false;
     }
-    string str[msgCount];
-    for (uint32_t i = 0; i < msgCount; ++i) {
-        str[i] = StringUtil::toString(i);
+
+    if (!StringUtil::strToUInt32(argv[4], msgLength)) {
+        LOG(ERROR) << "msg length error: " << argv[4] << endl;
+        return false;
     }
+
+    string str(msgLength, 'a');
+
     ThreadPtr threadPtr[threadCount];
     for (uint32_t i = 0; i < threadCount; ++i) {
         TcpConnection *connection = transport.connect(spec, &packetStream, -1);
         assert(connection);
         threadPtr[i] = Thread::createThread(tr1::bind(&runSendMsgThread, 
-                        connection, msgCount, str));
+						      connection, msgCount, msgLength, str));
         assert(threadPtr);
     }
     transport.wait();

@@ -33,7 +33,7 @@ public:
         _socketFd = socketFd;
     }
 
-    int readn(void *buf, size_t n) {
+    int readn(void *buf, size_t n, bool isBlock = true) {
         size_t nleft = n;
         char *ptr = (char*)buf;
         ssize_t nread;
@@ -41,7 +41,13 @@ public:
             if ((nread = read(_socketFd, ptr, nleft)) <= 0) {
                 if (errno == EINTR) {
                     nread = 0;
-                } else {
+                } else if (errno == EAGAIN) {
+		  if (isBlock) {
+		    nread = 0;
+		  } else {
+		    return nread;
+		  }
+		} else {
                     return nread;
                 }
             }

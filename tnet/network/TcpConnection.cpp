@@ -56,7 +56,8 @@ Packet* TcpConnection::getOnePacket(bool &closed) {
     dataBuffer.ensureFree(PacketHeader::PACKET_HEADER_LEN);
     
     int readLen = _socket->readn((void*)dataBuffer.getData(), 
-                                    PacketHeader::PACKET_HEADER_LEN);
+				 PacketHeader::PACKET_HEADER_LEN,
+				 false);
     if (readLen == 0) {
         closed = true;
         return NULL;
@@ -67,7 +68,7 @@ Packet* TcpConnection::getOnePacket(bool &closed) {
     dataBuffer.pourData(PacketHeader::PACKET_HEADER_LEN);
     uint32_t bodyLen = dataBuffer.onlyReadUInt32();
     dataBuffer.ensureFree(bodyLen);
-    if (_socket->readn((void*)dataBuffer.getFree(), bodyLen) 
+    if (_socket->readn((void*)dataBuffer.getFree(), bodyLen, true) 
         != bodyLen) 
     {
         return NULL;
