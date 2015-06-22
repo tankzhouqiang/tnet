@@ -60,6 +60,7 @@ int TcpConnection::readSocket(int needSize) {
 
 Packet* TcpConnection::getOnePacket(bool &closed) {
     if (_inputDataBuff.getDataLen() < PacketHeader::PACKET_HEADER_LEN) {
+        cout << "read packet head." << endl;
         int ret = readSocket(DEFAULT_SOCKET_READ_SIZE);
         if (ret > 0) {
             _inputDataBuff.pourData(ret);
@@ -76,6 +77,7 @@ Packet* TcpConnection::getOnePacket(bool &closed) {
         int needSize = packetLen - _inputDataBuff.getDataLen();
         needSize = needSize > DEFAULT_SOCKET_READ_SIZE ?
                        needSize : DEFAULT_SOCKET_READ_SIZE;
+        cout << "read packet body." << needSize << endl;
         int ret = readSocket(needSize);
         if (ret > 0) {
             _inputDataBuff.pourData(ret);
@@ -168,12 +170,14 @@ bool TcpConnection::handleWriteEvent() {
         }
     }
     int dataLen = _outputDataBuff.getDataLen();
-    if (int ret = _socket->writen(_outputDataBuff.getData(), 
-                                  dataLen) > 0)
-    {
-        _outputDataBuff.drainData(ret);
+    if (dataLen > 0) {
+        int ret = _socket->writen(_outputDataBuff.getData(), 
+                dataLen);
+        if (ret > 0) {
+            _outputDataBuff.drainData(ret);
+        }
+        _outputDataBuff.shrink();
     }
-    _outputDataBuff.shrink();
 }
 
 bool TcpConnection::checkTimeout() {
