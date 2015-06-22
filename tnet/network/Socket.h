@@ -33,46 +33,20 @@ public:
         _socketFd = socketFd;
     }
 
-    int readn(void *buf, size_t n, bool isBlock = true) {
-        size_t nleft = n;
-        char *ptr = (char*)buf;
-        ssize_t nread;
-        while (nleft > 0) {
-            if ((nread = read(_socketFd, ptr, nleft)) <= 0) {
-                if (errno == EINTR) {
-                    nread = 0;
-                } else if (errno == EAGAIN) {
-		  if (isBlock) {
-		    nread = 0;
-		  } else {
-		    return nread;
-		  }
-		} else {
-                    return nread;
-                }
-            }
-            nleft -= nread;
-            ptr += nread;
-        }
-        return (n - nleft);
+    int readn(void *buf, size_t n) {
+        int res;
+        do {
+            res = ::read(_socketFd, buf, n);
+        } while (res < 0 && errno == EINTR);
+        return res;
     }
 
-    ssize_t writen(void *buf, size_t n) {
-        size_t nleft = n ;
-        char *ptr = (char*)buf;
-        ssize_t nwrite = 0;
-        while (nleft > 0) {
-            if ((nwrite = write(_socketFd, ptr, nleft)) <= 0) {
-                if (nwrite < 0 && (errno == EINTR || errno == EAGAIN)) {
-                    nwrite = 0;
-                } else {
-                    return nwrite;
-                }
-            }
-            nleft -= nwrite;
-            ptr += nwrite;
-        }
-        return (n);
+    int writen(void *buf, size_t n) {
+        int res;
+        do {
+            res = ::write(_socketFd, buf, n);
+        } while (res < 0 && errno == EINTR);
+        return res;
     }
 
     int getSoError() {

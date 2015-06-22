@@ -8,6 +8,7 @@
 #include <tnet/network/ServerAdapter.h>
 #include <tnet/network/SessionPool.h>
 #include <tnet/util/Lock.h>
+#include <tnet/util/DataBuffer.h>
 
 TNET_BEGIN_NAMESPACE(network);
 class ServerAdapter;
@@ -17,6 +18,7 @@ class TcpConnection : public IOComponent
 public:
     const static uint32_t PACKET_LEN_SIZE = 0;
     const static uint32_t ONE_SEND_PACKET_COUNT = 10000;
+    const static int DEFAULT_SOCKET_READ_SIZE = 1024 * 1024; //1M
 public:
     TcpConnection();
     ~TcpConnection();
@@ -49,6 +51,7 @@ public:
     virtual bool checkTimeout();
 private:
     Packet* getOnePacket(bool &closed);
+    int readSocket(int needSize);
 //for test
 public:
     std::list<Packet*>& getPacketList() {
@@ -63,6 +66,8 @@ private:
     IPacketHandler *_clientAdapter;
     SessionPool _sessionPool;
     int64_t _timeout;
+    util::DataBuffer _inputDataBuff;
+    util::DataBuffer _outputDataBuff;
 };
 
 TNET_TYPEDEF_PTR(TcpConnection);

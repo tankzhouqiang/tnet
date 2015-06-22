@@ -51,34 +51,54 @@ bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
     return true;
 }
 
+int TcpConnection::readSocket(int needSize) {
+    _inputDataBuff.ensureFree(needSize);
+    int readLen = _socket->readn((void*)_inputDataBuff.getData(), 
+				 needSize);
+    return readLen;
+}
+
 Packet* TcpConnection::getOnePacket(bool &closed) {
-    DataBuffer dataBuffer;
-    dataBuffer.ensureFree(PacketHeader::PACKET_HEADER_LEN);
+    if (_inputDataBuff.getDataLen() < PacketHeader::PACKET_HEADER_LEN) {
+        int ret = readSocket(DEFAULT_SOCKET_READ_SIZE);
+        if (ret > 0) {
+            _inputDataBuff.pourData(ret);
+            if (ret < PacketHeader::PACKET_HEADER_LEN) {
+                return NULL;
+            }
+        } else {
+            return NULL;
+        }
+    }
+    uint32_t bodyLen = _inputDataBuff.onlyReadUInt32();
+    int packetLen = bodyLen + PacketHeader::PACKET_HEADER_LEN;
+    if (_inputDataBuff.getDataLen() < packetLen) {
+        int needSize = packetLen - _inputDataBuff.getDataLen();
+        needSize = needSize > DEFAULT_SOCKET_READ_SIZE ?
+                       needSize : DEFAULT_SOCKET_READ_SIZE;
+        int ret = readSocket(needSize);
+        if (ret > 0) {
+            _inputDataBuff.pourData(ret);
+            if (ret < needSize) {
+                return NULL;
+            }
+        } else {
+            return NULL;
+        }
+    }
     
-    int readLen = _socket->readn((void*)dataBuffer.getData(), 
-				 PacketHeader::PACKET_HEADER_LEN,
-				 false);
-    if (readLen == 0) {
-        closed = true;
-        return NULL;
-    }
-    if (readLen != PacketHeader::PACKET_HEADER_LEN) {
-        return NULL;
-    }
-    dataBuffer.pourData(PacketHeader::PACKET_HEADER_LEN);
-    uint32_t bodyLen = dataBuffer.onlyReadUInt32();
-    dataBuffer.ensureFree(bodyLen);
-    if (_socket->readn((void*)dataBuffer.getFree(), bodyLen, true) 
-        != bodyLen) 
-    {
-        return NULL;
-    }
-    dataBuffer.pourData(bodyLen);
-    Packet *packet = _packetStream->decode(&dataBuffer);
+    //todo how to process close
+    // if (readLen == 0) {
+    //     closed = true;
+    //     return NULL;
+    // }
+
+    Packet *packet = _packetStream->decode(&_inputDataBuff);
     if (!packet) {
         LOG(ERROR) << "decode packet error" << endl;
         return NULL;
     }
+    _inputDataBuff.shrink();
     return packet;
 }
 
@@ -137,21 +157,23 @@ bool TcpConnection::handleWriteEvent() {
         DataBuffer dataBuffer;
         Packet *packet = *it;
         assert(packet);
-        if (!_packetStream->encode(packet, &dataBuffer)) {
+        if (!_packetStream->encode(packet, &_outputDataBuff)) {
             LOG(ERROR) << "encode packet error" << endl;
             delete packet;
             continue;
-        }
-        int dataLen = dataBuffer.getDataLen();
-        if (_socket->writen(dataBuffer.getData(), dataLen) != dataLen)
-        {
-            LOG(ERROR) << "write data error" << endl;
         }
         delete packet;
         if (++count >= ONE_SEND_PACKET_COUNT) {
             break;
         }
     }
+    int dataLen = _outputDataBuff.getDataLen();
+    if (int ret = _socket->writen(_outputDataBuff.getData(), 
+                                  dataLen) > 0)
+    {
+        _outputDataBuff.drainData(ret);
+    }
+    _outputDataBuff.shrink();
 }
 
 bool TcpConnection::checkTimeout() {
