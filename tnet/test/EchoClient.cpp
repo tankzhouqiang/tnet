@@ -48,7 +48,6 @@ void runSendMsgThread(TcpConnection *connection, uint32_t msgCount,
 {
     assert(connection);
     cout << "msgLength: " << str.length() << endl;
-    cout << "send msg: " << str << endl;
     for (uint32_t i = 0; i < msgCount; i++) {
         DefaultPacket *packet = new DefaultPacket();
         packet->setBodyLen(str.length());
