@@ -30,7 +30,7 @@ public:
         uint32_t bodyLen = defaultPacket->getBodyLen();
         string echoString((char*)defaultPacket->getBody(), 
                           bodyLen);
-	LOG(INFO) << "client receive " << echoString << endl;
+	//	LOG(INFO) << "client receive " << echoString << endl;
         if (memcmp(args, defaultPacket->getBody(), bodyLen) != 0) {
             string argsStr((char*)args, bodyLen);
             LOG(ERROR) << "packet echo " <<  
