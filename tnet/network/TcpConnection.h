@@ -51,7 +51,7 @@ public:
     virtual bool checkTimeout();
 private:
     Packet* getOnePacket(bool &closed);
-    int readSocket(int needSize);
+    int readSocket(int readSize);
 //for test
 public:
     std::list<Packet*>& getPacketList() {

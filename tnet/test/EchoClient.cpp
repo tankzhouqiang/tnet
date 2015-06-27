@@ -17,7 +17,9 @@ using namespace std;
 class EchoPacketHandler : public IPacketHandler
 {
 public:
-    EchoPacketHandler() {}
+    EchoPacketHandler() {
+      _count = 0;
+    }
     ~EchoPacketHandler() {}
 public:
     /*override*/ virtual void handlePacket(Packet *packet, 
@@ -37,8 +39,12 @@ public:
                 echoString << "is not equal origin" << argsStr << "end" << endl;
             assert(false);
         }
+	//	if (++_count % 10000 == 0) {
+	  cout << "client receive " << ++_count << endl;
+	  //	}
     }
 private:
+  uint32_t _count;
 };
 
 EchoPacketHandler packetHandler;

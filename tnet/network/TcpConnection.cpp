@@ -51,10 +51,10 @@ bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
     return true;
 }
 
-int TcpConnection::readSocket(int needSize) {
-    _inputDataBuff.ensureFree(needSize);
+int TcpConnection::readSocket(int readSize) {
+    _inputDataBuff.ensureFree(readSize);
     int readLen = _socket->readn((void*)_inputDataBuff.getFree(), 
-				 needSize);
+				 readSize);
     return readLen;
 }
 
@@ -71,14 +71,12 @@ Packet* TcpConnection::getOnePacket(bool &closed) {
         }
     }
     uint32_t bodyLen = _inputDataBuff.onlyReadUInt32();
-    
     int packetLen = bodyLen + PacketHeader::PACKET_HEADER_LEN;
     if (_inputDataBuff.getDataLen() < packetLen) {
         int needSize = packetLen - _inputDataBuff.getDataLen();
-        needSize = needSize > DEFAULT_SOCKET_READ_SIZE ?
+        int readSize = needSize > DEFAULT_SOCKET_READ_SIZE ?
                        needSize : DEFAULT_SOCKET_READ_SIZE;
-
-        int ret = readSocket(needSize);
+        int ret = readSocket(readSize);
         if (ret > 0) {
             _inputDataBuff.pourData(ret);
             if (ret < needSize) {
