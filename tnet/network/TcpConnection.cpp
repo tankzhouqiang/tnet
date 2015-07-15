@@ -123,6 +123,7 @@ bool TcpConnection::handleReadEvent() {
                 continue;
             }
             IPacketHandler *handler = session->_handler;
+	    //	    cout << "sessionId: " << sessionId << endl;
             handler->handlePacket(packet, session->_args);
             delete packet;
             delete session;
@@ -135,6 +136,7 @@ bool TcpConnection::handleWriteEvent() {
     uint32_t count = 0;
     list<Packet*> sendPacketList;
     {
+        int outputDataLen = _outputDataBuff.getDataLen();
         util::ScopedLock lock(_packetLock);
         uint32_t count = 0;
         for (list<Packet*>::iterator it = _packetList.begin(); 
@@ -145,6 +147,12 @@ bool TcpConnection::handleWriteEvent() {
             if (++count > ONE_SEND_PACKET_COUNT) {
                 break;
             }
+	    //limit output buf size.
+	    int packetLen = packet->getBodyLen() + PacketHeader::PACKET_HEADER_LEN;
+	    outputDataLen += packetLen;
+	    if (outputDataLen > MAX_DATABUF_SIZE) {
+	      break;
+	    }
         }
         for (uint32_t i = 0; i < count; ++i) {
             _packetList.pop_front();
@@ -163,9 +171,6 @@ bool TcpConnection::handleWriteEvent() {
             continue;
         }
         delete packet;
-        if (++count >= ONE_SEND_PACKET_COUNT) {
-            break;
-        }
     }
     int dataLen = _outputDataBuff.getDataLen();
     if (dataLen > 0) {

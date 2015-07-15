@@ -39,9 +39,9 @@ public:
                 echoString << "is not equal origin" << argsStr << "end" << endl;
             assert(false);
         }
-	//	if (++_count % 10000 == 0) {
-	  cout << "client receive " << ++_count << endl;
-	  //	}
+	if (++_count % 10000 == 0) {
+	  cout << "client receive " << _count << endl;
+	}
     }
 private:
   uint32_t _count;

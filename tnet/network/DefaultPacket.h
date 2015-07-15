@@ -11,7 +11,7 @@ class DefaultPacket : public Packet
 {
 public:
     DefaultPacket();
-    ~DefaultPacket();
+    virtual ~DefaultPacket();
 private:
     DefaultPacket(const DefaultPacket &);
     DefaultPacket& operator=(const DefaultPacket &);

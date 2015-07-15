@@ -19,6 +19,7 @@ public:
     const static uint32_t PACKET_LEN_SIZE = 0;
     const static uint32_t ONE_SEND_PACKET_COUNT = 10000;
     const static int DEFAULT_SOCKET_READ_SIZE = 1024 * 1024; //1M
+    const static int MAX_DATABUF_SIZE = 256 * 1024 * 1024; //512M
 public:
     TcpConnection();
     ~TcpConnection();
