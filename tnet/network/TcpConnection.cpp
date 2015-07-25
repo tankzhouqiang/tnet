@@ -33,13 +33,20 @@ bool TcpConnection::init(const string&ip, int port,
 }
 
 bool TcpConnection::postPacket(Packet *packet, IPacketHandler *packetHandler,
-                               void *args) 
+                               void *args, bool block) 
 {
     if (!packet) {
         LOG(ERROR) << "packet is empty" << endl;
         return false;
     }
     if (!_isServer) {
+      if (!block && _sessionPool.getSessionCount() > MAX_PACKET_SIZE) {
+	LOG(ERROR) << "send packet list is full." << endl;
+	return false;
+      } 
+      while (block && _sessionPool.getSessionCount() > MAX_PACKET_SIZE) {
+	usleep(SEND_WAIT_TIME);
+      }
         uint32_t sessionId = _sessionPool.allocateSession(
                 packetHandler, args, packet, _timeout);
         packet->setSessionId(sessionId);

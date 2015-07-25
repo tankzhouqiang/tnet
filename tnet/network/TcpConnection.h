@@ -17,9 +17,11 @@ class TcpConnection : public IOComponent
 {
 public:
     const static uint32_t PACKET_LEN_SIZE = 0;
-    const static uint32_t ONE_SEND_PACKET_COUNT = 10000;
+    const static uint32_t ONE_SEND_PACKET_COUNT = 128;
     const static int DEFAULT_SOCKET_READ_SIZE = 1024 * 1024; //1M
     const static int MAX_DATABUF_SIZE = 256 * 1024 * 1024; //512M
+    const static int MAX_PACKET_SIZE = 1024; 
+    const static int SEND_WAIT_TIME = 5000;   //5ms
 public:
     TcpConnection();
     ~TcpConnection();
@@ -31,7 +33,8 @@ public:
               PacketStream *packetStream, int64_t timeout);
     bool postPacket(Packet *packet, 
                     IPacketHandler *packetHandler = NULL, 
-                    void *args = NULL);
+                    void *args = NULL,
+		    bool block = true);
     void setIsServer(bool isServer) {
         _isServer = isServer;
     }

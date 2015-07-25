@@ -40,7 +40,7 @@ public:
             assert(false);
         }
 	if (++_count % 10000 == 0) {
-	  cout << "client receive " << _count << endl;
+	  LOG(INFO) << "client receive " << _count << endl;
 	}
     }
 private:

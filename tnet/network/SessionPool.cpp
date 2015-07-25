@@ -7,7 +7,9 @@ TNET_USE_NAMESPACE(util);
 TNET_BEGIN_NAMESPACE(network);
 
 SessionPool::SessionPool() 
-    : _sessionId(0) { 
+    : _sessionId(0)
+    , _sessionCount(0) 
+{ 
 }
 
 SessionPool::~SessionPool() { 
@@ -29,6 +31,7 @@ uint32_t SessionPool::allocateSession(IPacketHandler *handler,
     Session *session = new Session(handler, args, sendTime, timeout);
     ScopedLock lock(_sessionMutex);
     _sessionPool[_sessionId] = session;
+    _sessionCount++;
     return _sessionId++;
 }
 
@@ -43,6 +46,7 @@ Session* SessionPool::getSession(uint32_t sessionId) {
     //session is delete in getSession.
     Session *session = it->second;
     _sessionPool.erase(it);
+    _sessionCount--;
     return session;
 }
 
@@ -61,6 +65,7 @@ void SessionPool::checkTimeout() {
                           << " is timeout" << endl;
                 timeoutList.push_back(session);
                 _sessionPool.erase(it++);
+		_sessionCount--;
             } else {
                 ++it;
             }

@@ -20,11 +20,15 @@ public:
                              Packet *packet, int64_t timeout);
     Session* getSession(uint32_t sessionId);
     void checkTimeout();
+    uint32_t getSessionCount() const {
+      return _sessionCount;
+    }
 public:
 //for test;
     Session* testSession(uint32_t sessionId);
 private:
     uint32_t _sessionId;
+    uint32_t _sessionCount;
     std::map<uint32_t, Session*> _sessionPool;
     util::ThreadMutex _sessionMutex;
 };
