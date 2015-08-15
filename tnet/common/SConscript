@@ -3,10 +3,10 @@ Import('env')
 env.MergeFlags('-I.')
 
 libcommon_sources = [
-    'Packet.cpp',
     ]
 
 env.SharedLibrary(target = 'tnet_common',
-              source = libcommon_sources)
+                  source = libcommon_sources,
+                  CPPPATH = env['install_root'])
 
 SConscript('test/SConscript', 'env')

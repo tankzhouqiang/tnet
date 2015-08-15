@@ -10,6 +10,7 @@ libutil_sources = [
     ]
 
 env.SharedLibrary(target = 'tnet_util',
-              source = libutil_sources)
+                  source = libutil_sources,
+                  CPPPATH = env['install_root'])
 
 SConscript('test/SConscript', 'env')

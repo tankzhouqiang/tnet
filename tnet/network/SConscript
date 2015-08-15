@@ -24,6 +24,7 @@ libnetwork_sources = [
     ]
 
 env.SharedLibrary(target = 'tnet_network',
-              source = libnetwork_sources)
+                  source = libnetwork_sources,
+                  CPPPATH = env['install_root'])
 
 SConscript('test/SConscript', 'env')
