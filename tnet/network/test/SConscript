@@ -14,6 +14,5 @@ env.Program('tnet_network_test',
             LIBS = ['glog', 'gtest', 'tnet_network', 'tnet_util', 'pthread'], 
             LIBPATH = ['.', '../', '../../util', '../../../lib/'])
 
-cmd ="/usr/bin/env install_root=%s GLOG_logtostderr=1 LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib64:/usr/lib:%s/build/network/:%s/lib:%s/build/util/ ./tnet_network_test" % (env['install_root'], env['install_root'], env['install_root'], env['install_root'])
-print cmd
-os.system(cmd)
+utiltest = env.uTest('unittest', 'tnet_network_test')
+
