@@ -6,6 +6,7 @@ lib_trpc_sources = [
     'TnetRPCChannel.cpp',
     'RpcServer.cpp',
     'ChannelManager.cpp',
+    'RPCPacketHandler.cpp',
     ]
 
 env.SharedLibrary(target = 'trpc',

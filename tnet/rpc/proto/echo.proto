@@ -1,5 +1,5 @@
 import "rpc_extensions.proto";
-package trpc;
+package tnet;
 option cc_generic_services = true;
 
 message EchoRequest

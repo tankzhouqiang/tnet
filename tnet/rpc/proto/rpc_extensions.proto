@@ -1,7 +1,7 @@
 // See README.txt for information and build instructions.
 
 import "google/protobuf/descriptor.proto";
-package trpc;
+package tnet;
 
 extend google.protobuf.ServiceOptions {
   required uint32 service_id = 1000;
