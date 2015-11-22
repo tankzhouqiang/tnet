@@ -1,0 +1,15 @@
+// See README.txt for information and build instructions.
+
+import "google/protobuf/descriptor.proto";
+package trpc;
+
+extend google.protobuf.ServiceOptions {
+  required uint32 service_id = 1000;
+}
+
+extend google.protobuf.MethodOptions {
+  required uint32 method_id = 1000;
+}
+
+
+

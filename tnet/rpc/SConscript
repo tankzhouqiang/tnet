@@ -1,0 +1,15 @@
+# -*- mode: python -*-
+Import('env')
+env.MergeFlags('-I.')
+
+lib_trpc_sources = [
+    'TnetRPCChannel.cpp',
+    'RpcServer.cpp',
+    'ChannelManager.cpp',
+    ]
+
+env.SharedLibrary(target = 'trpc',
+                  source = lib_trpc_sources,
+                  CPPPATH = env['install_root'])
+
+#SConscript('test/SConscript', 'env')

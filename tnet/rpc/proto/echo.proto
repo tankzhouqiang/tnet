@@ -1,0 +1,22 @@
+import "rpc_extensions.proto";
+package trpc;
+option cc_generic_services = true;
+
+message EchoRequest
+{
+    required string request = 1;
+};
+
+message EchoResponse
+{
+    required string response = 1;
+};
+
+
+service EchoService
+{
+    option (trpc.service_id) = 1001;
+    rpc Echo(EchoRequest) returns (EchoResponse) {
+	option (trpc.method_id) = 1001;
+    }
+}

@@ -10,6 +10,10 @@
 #include <glog/logging.h>
 #include <map>
 #include <fcntl.h>
+#include <google/protobuf/service.h>
+#include <google/protobuf/message.h>
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/descriptor.h>
 
 const static int64_t DEFAULT_TIMEOUT = 5 * 1000 * 1000; //5s
 
