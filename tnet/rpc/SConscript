@@ -7,6 +7,7 @@ lib_trpc_sources = [
     'RpcServer.cpp',
     'ChannelManager.cpp',
     'RPCPacketHandler.cpp',
+    'RPCReturnArg.cpp',
     ]
 
 env.SharedLibrary(target = 'trpc',
