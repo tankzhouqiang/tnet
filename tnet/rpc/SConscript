@@ -3,6 +3,7 @@ Import('env')
 env.MergeFlags('-I.')
 
 lib_trpc_sources = [
+    'rpc_extensions.pb.cc',
     'TnetRPCChannel.cpp',
     'RpcServer.cpp',
     'ChannelManager.cpp',

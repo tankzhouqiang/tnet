@@ -22,6 +22,9 @@ public:
             google::protobuf::Message *response,
             google::protobuf::Closure *done);
 private:
+    uint32_t generateType(const google::protobuf::MethodDescriptor *method);
+
+private:
     network::TcpConnection *_connection;
 };
 

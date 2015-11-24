@@ -1,5 +1,6 @@
 #include <tnet/rpc/TnetRPCChannel.h>
 #include <tnet/network/DefaultPacket.h>
+#include <tnet/rpc/rpc_extensions.pb.h>
 
 TNET_USE_NAMESPACE(network);
 TNET_BEGIN_NAMESPACE(rpc);
@@ -15,6 +16,17 @@ TnetRPCChannel::~TnetRPCChannel() {
     }
 }
 
+uint32_t TnetRPCChannel::generateType(
+        const google::protobuf::MethodDescriptor *method)
+{
+    assert(method);
+    const google::protobuf::ServiceDescriptor *serviceDes = method->service();
+    uint32_t serviceId = (uint32_t) (serviceDes->options().GetExtension(tnet::service_id));
+    uint32_t methodId = (uint32_t) (method->options().GetExtension(tnet::method_id));
+    uint32_t type = (serviceId << 16) | methodId;
+    return type;
+}
+
 void TnetRPCChannel::CallMethod(
         const google::protobuf::MethodDescriptor *method,
         google::protobuf::RpcController *controller,
@@ -23,11 +35,7 @@ void TnetRPCChannel::CallMethod(
         google::protobuf::Closure *done)
 {
     assert(method);
-    const google::protobuf::ServiceDescriptor *serviceDes = method->service();
-    // uint32_t serviceId = (uint32_t) (serviceDes->options().GetExtension(service_id));
-    // uint32_t methodId = (uint32_t) (method->options().GetExtension(service_id));
-    // uint32_t type = (serviceId << 16) | methodId;
-    uint32_t type;
+    uint32_t type = generateType(method);
     DefaultPacket *packet = new DefaultPacket();
     packet->setPacketType(type);
     
