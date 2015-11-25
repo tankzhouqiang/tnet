@@ -3,6 +3,7 @@
 
 #include <tnet/common/Common.h>
 #include <tnet/network/TcpConnection.h>
+#include <tnet/rpc/RPCPacketHandler.h>
 
 TNET_BEGIN_NAMESPACE(rpc);
 
@@ -26,6 +27,7 @@ private:
 
 private:
     network::TcpConnection *_connection;
+    RPCPacketHandler _handler;
 };
 
 TNET_TYPEDEF_PTR(TnetRPCChannel);

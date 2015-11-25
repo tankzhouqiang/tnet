@@ -17,6 +17,7 @@ void RPCPacketHandler::handlePacket(Packet *packet, void *args)
         dynamic_cast<DefaultPacket*>(packet);
     assert(defaultPacket);
     uint32_t bodyLen = defaultPacket->getBodyLen();
+    
 }
 
 TNET_END_NAMESPACE(rpc);

@@ -39,7 +39,13 @@ void TnetRPCChannel::CallMethod(
     DefaultPacket *packet = new DefaultPacket();
     packet->setPacketType(type);
     
-
+    uint32_t size = request->ByteSize();
+    void *packetBody = malloc(size);
+    request->SerializeToArray(packetBody, size);
+    packet->setBodyLen(size);
+    packet->setBody(packetBody);
+    packet->setIsOwnBody(true);
+    _connection->postPacket(packet, &_handler, NULL);
 }
 
 TNET_END_NAMESPACE(rpc);
