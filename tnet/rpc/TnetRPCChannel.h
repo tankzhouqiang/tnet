@@ -23,9 +23,10 @@ public:
             const google::protobuf::Message *request,
             google::protobuf::Message *response,
             google::protobuf::Closure *done);
-private:
-    uint32_t generateType(const google::protobuf::MethodDescriptor *method);
+    static uint32_t generateType(
+            const google::protobuf::MethodDescriptor *method);
 
+private:
     network::DefaultPacket* generatePacket(
         const google::protobuf::MethodDescriptor *method,
         const google::protobuf::Message *request);

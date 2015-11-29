@@ -14,8 +14,9 @@ private:
     RpcServer(const RpcServer &);
     RpcServer& operator=(const RpcServer &);
 public:
-
+    bool registerService(google::protobuf::Service *service);
 private:
+    std::map<uint32_t, google::protobuf::MethodDescriptor*> _rpcCallMap;
 };
 
 TNET_TYPEDEF_PTR(RpcServer);
